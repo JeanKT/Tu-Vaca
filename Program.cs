@@ -1,6 +1,13 @@
+
+using Microsoft.EntityFrameworkCore;
+using TuVaca.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<TuVacaDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TuVacaDB")));
 
 var app = builder.Build();
 
