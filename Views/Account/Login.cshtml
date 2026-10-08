@@ -1,0 +1,215 @@
+﻿@{
+    ViewData["Title"] = "Acceso a la plataforma";
+}
+
+<style>
+    body {
+        background-color: #f5f4ed;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        color: #2b2b2b;
+    }
+
+    .navbar-custom {
+        background-color: #275d38;
+        padding: 12px 28px;
+    }
+
+    .navbar-brand {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1.3rem;
+        text-decoration: none;
+    }
+
+    .brand-logo-nav {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 8px;
+    }
+
+    .nav-link-custom {
+        color: #d2e4d6;
+        text-decoration: none;
+        margin: 0 14px;
+        font-size: 0.92rem;
+    }
+
+    .login-container {
+        max-width: 440px;
+        margin: 50px auto;
+    }
+
+    .login-card {
+        background-color: #ffffff;
+        border: 1px solid #e3e1d5;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        padding: 40px 36px;
+        text-align: center;
+    }
+
+    .login-logo {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 16px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .login-title {
+        font-family: Georgia, serif;
+        font-size: 1.75rem;
+        color: #1e2d24;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .login-subtitle {
+        color: #616668;
+        font-size: 0.95rem;
+        margin-bottom: 28px;
+    }
+
+    .form-label-custom {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #555;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        display: block;
+        text-align: left;
+        margin-bottom: 6px;
+    }
+
+    .form-control-custom {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        width: 100%;
+        margin-bottom: 18px;
+    }
+
+    .btn-submit-green {
+        background-color: #275d38;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 12px;
+        width: 100%;
+        font-size: 1rem;
+        transition: background-color 0.2s;
+    }
+
+        .btn-submit-green:hover {
+            background-color: #1e492b;
+            color: #ffffff;
+        }
+
+    .btn-register-outline {
+        border: 1.5px solid #9e673a;
+        color: #9e673a;
+        background-color: transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 10px;
+        width: 100%;
+        font-size: 0.95rem;
+        display: block;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+        .btn-register-outline:hover {
+            background-color: #9e673a;
+            color: #ffffff;
+        }
+
+    .divider-text {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: #888;
+        font-size: 0.85rem;
+        margin: 24px 0;
+    }
+
+        .divider-text::before, .divider-text::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e3e1d5;
+        }
+
+        .divider-text:not(:empty)::before {
+            margin-right: .75em;
+        }
+
+        .divider-text:not(:empty)::after {
+            margin-left: .75em;
+        }
+</style>
+
+<!-- Navbar -->
+<div class="navbar-custom d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+        <a class="navbar-brand me-4 d-flex align-items-center" href="@Url.Action("Index", "Home")">
+            <img src="@Url.Content("~/images/tuvagalogo.jpeg")" alt="Tu Vaca" class="brand-logo-nav" />
+            Tu Vaca
+        </a>
+        <div class="d-none d-md-flex">
+            <a class="nav-link-custom" href="@Url.Action("Index", "Home")">Inicio</a>
+            <a class="nav-link-custom" href="#">Mi hato</a>
+            <a class="nav-link-custom" href="#">Marketplace</a>
+            <a class="nav-link-custom" href="#">Producción</a>
+            <a class="nav-link-custom" href="#">Ayuda</a>
+        </div>
+    </div>
+
+    <div class="text-white-50 small text-end">
+        <span class="d-block text-white fw-semibold">Invitado</span>
+        <span>Sin sesión</span>
+    </div>
+</div>
+
+<!-- Login Card -->
+<div class="login-container">
+    <div class="login-card">
+        <img src="@Url.Content("~/images/tuvagalogo.jpeg")" alt="Logo Tu Vaca" class="login-logo" />
+
+        <h2 class="login-title">Acceso a Tu Vaca</h2>
+        <p class="login-subtitle">Ingresa tus datos para continuar</p>
+
+        <form method="post" action="@Url.Action("Login", "Account")">
+            <div class="text-start">
+                <label class="form-label-custom">Correo o Cédula</label>
+                <input type="text" name="email" class="form-control-custom" placeholder="ejemplo@finca.co" required />
+            </div>
+
+            <div class="text-start">
+                <label class="form-label-custom">Contraseña</label>
+                <input type="password" name="password" class="form-control-custom" placeholder="••••••••" required />
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4" style="font-size: 0.88rem;">
+                <label class="d-flex align-items-center gap-2">
+                    <input type="checkbox" name="rememberMe" style="accent-color: #275d38;" />
+                    <span>Mantener sesión</span>
+                </label>
+                <a href="#" style="color: #275d38; text-decoration: none; font-weight: 500;">¿Olvidó su contraseña?</a>
+            </div>
+
+            <button type="submit" class="btn-submit-green">Ingresar</button>
+        </form>
+
+        <div class="divider-text">¿No tienes una cuenta?</div>
+
+        <!-- Botón para ir a Crear Cuenta -->
+        <a href="@Url.Action("Register", "Account")" class="btn-register-outline">
+            Crear cuenta nueva
+        </a>
+    </div>
+</div>

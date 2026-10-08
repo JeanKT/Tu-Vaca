@@ -1,0 +1,208 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<style>
+    body {
+        background-color: #f5f4ed;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        color: #2b2b2b;
+    }
+
+    /* Navbar */
+    .navbar-custom {
+        background-color: #275d38;
+        padding: 12px 28px;
+    }
+
+    .navbar-brand {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1.3rem;
+        text-decoration: none;
+    }
+
+    .brand-logo-nav {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 8px;
+    }
+
+    .nav-link-custom {
+        color: #d2e4d6;
+        text-decoration: none;
+        margin: 0 14px;
+        font-size: 0.92rem;
+    }
+
+        .nav-link-custom.active {
+            color: #ffffff;
+            border-bottom: 2px solid #ffffff;
+            font-weight: 600;
+            padding-bottom: 2px;
+        }
+
+    /* Hero */
+    .hero-card {
+        background-color: #ffffff;
+        border: 1px solid #e3e1d5;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        padding: 48px 32px;
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .hero-logo-img {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .hero-title {
+        font-family: Georgia, serif;
+        color: #1e2d24;
+        font-weight: 700;
+        font-size: 2.3rem;
+        margin-bottom: 12px;
+    }
+
+    .hero-subtitle {
+        color: #616668;
+        font-size: 1.05rem;
+        max-width: 600px;
+        margin: 0 auto 32px auto;
+        line-height: 1.5;
+    }
+
+    /* Botones centrales */
+    .btn-action-green {
+        background-color: #275d38;
+        color: #ffffff;
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 12px 32px;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-action-green:hover {
+            background-color: #1e492b;
+            color: #ffffff;
+        }
+
+    .btn-action-brown {
+        background-color: #9e673a;
+        color: #ffffff;
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 12px 32px;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-action-brown:hover {
+            background-color: #83522c;
+            color: #ffffff;
+        }
+
+    /* Módulos */
+    .feature-box {
+        background-color: #ffffff;
+        border: 1px solid #e3e1d5;
+        border-radius: 12px;
+        padding: 24px;
+        height: 100%;
+    }
+
+    .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .feature-title {
+        font-family: Georgia, serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #1e2d24;
+        margin-bottom: 8px;
+    }
+
+    .feature-text {
+        color: #616668;
+        font-size: 0.88rem;
+        line-height: 1.4;
+        margin-bottom: 0;
+    }
+</style>
+
+<!-- Navbar Superior (Sin botones a la derecha) -->
+<div class="navbar-custom d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+        <a class="navbar-brand me-4 d-flex align-items-center" href="@Url.Action("Index", "Home")">
+            <img src="@Url.Content("~/images/tuvagalogo.jpeg")" alt="Tu Vaca" class="brand-logo-nav" />
+            Tu Vaca
+        </a>
+        <div class="d-none d-md-flex">
+            <a class="nav-link-custom active" href="@Url.Action("Index", "Home")">Inicio</a>
+            <a class="nav-link-custom" href="@Url.Action("Login", "Account")">Mi hato</a>
+            <a class="nav-link-custom" href="@Url.Action("Login", "Account")">Marketplace</a>
+            <a class="nav-link-custom" href="@Url.Action("Login", "Account")">Producción</a>
+            <a class="nav-link-custom" href="#">Ayuda</a>
+        </div>
+    </div>
+</div>
+
+<!-- Hero Card -->
+<div class="container my-4" style="max-width: 1000px;">
+    <div class="hero-card">
+        <img src="@Url.Content("~/images/tuvagalogo.jpeg")" alt="Logo Tu Vaca" class="hero-logo-img" />
+        <h1 class="hero-title">Gestión ganadera y ganadería digital</h1>
+        <p class="hero-subtitle">
+            Administra tu hato, controla la producción de leche y conecta directamente con compradores y vendedores en nuestro Marketplace.
+        </p>
+
+        <!-- ÚNICOS BOTONES DE ACCESO -->
+        <div class="d-flex justify-content-center gap-3">
+            <a href="@Url.Action("Login", "Account")" class="btn-action-green">
+                Iniciar Sesión
+            </a>
+            <a href="@Url.Action("Register", "Account")" class="btn-action-brown">
+                Registrarse
+            </a>
+        </div>
+    </div>
+
+    <!-- Módulos Informativos -->
+    <div class="row g-4 mt-2">
+        <div class="col-md-4">
+            <div class="feature-box">
+                <span class="feature-icon">📊</span>
+                <h5 class="feature-title">Mi Hato</h5>
+                <p class="feature-text">Registro individual de bovinos, genealogía, estado de salud y trazabilidad completa de cada ejemplar.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-box">
+                <span class="feature-icon">🛒</span>
+                <h5 class="feature-title">Marketplace</h5>
+                <p class="feature-text">Compra y venta directa entre ganaderos sin intermediarios, con publicaciones verificadas.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-box">
+                <span class="feature-icon">🥛</span>
+                <h5 class="feature-title">Producción</h5>
+                <p class="feature-text">Monitoreo y estadísticas de pesajes de leche, rendimiento diario y proyecciones del predio.</p>
+            </div>
+        </div>
+    </div>
+</div>
