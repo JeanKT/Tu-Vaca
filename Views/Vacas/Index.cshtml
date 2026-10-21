@@ -1,0 +1,62 @@
+﻿@using TuVaca.Comun
+@model List<TuVaca.Models.Hato.VacaListadoItem>
+@{
+    ViewData["Title"] = "Mis vacas";
+    var sinFoto = Url.Content("~/images/vaca-sin-foto.svg");
+    // El botón "Publicar en venta" aparece solo cuando exista el CU-03 (PublicacionesController)
+    var urlPublicar = Url.Action("Crear", "Publicaciones");
+}
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+            <h1 class="tv-titulo h3 mb-0">Mis vacas</h1>
+            <p class="text-muted small mb-0">@Model.Count vaca(s) registrada(s)</p>
+        </div>
+        <a asp-controller="Vacas" asp-action="Registrar" class="btn btn-tv">+ Registrar vaca</a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="card tv-card">
+            <div class="card-body text-center py-5">
+                <p class="text-muted mb-3">Todavía no tienes vacas registradas.</p>
+                <a asp-controller="Vacas" asp-action="Registrar" class="btn btn-tv">Registrar mi primera vaca</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var vaca in Model)
+            {
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card tv-card h-100">
+                        @* FA-2-CU02: sin foto se muestra una imagen genérica *@
+                        <img src="@(vaca.FotoUrl ?? sinFoto)" alt="Foto de la vaca @vaca.Identificacion" class="tv-foto" />
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <h2 class="h5 mb-1">@vaca.Identificacion</h2>
+                                <span class="badge @(vaca.EstadoId == Catalogos.VacaViva ? "text-bg-success" : "text-bg-secondary")">@vaca.Estado</span>
+                            </div>
+                            <p class="tv-dato mb-1">@vaca.Raza · @vaca.Sexo</p>
+                            <p class="tv-dato mb-1">Edad: @Formatos.Edad(vaca.FechaNacimiento)</p>
+                            <p class="tv-dato mb-0">Peso: @vaca.Peso.ToString("0.##") kg</p>
+                            @if (vaca.TienePublicacionActiva)
+                            {
+                                <span class="badge text-bg-warning mt-2">Publicada en venta</span>
+                            }
+                        </div>
+                        @if (urlPublicar != null && vaca.EstadoId == Catalogos.VacaViva && !vaca.TienePublicacionActiva)
+                        {
+                            <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
+                                <a asp-controller="Publicaciones" asp-action="Crear" asp-route-vacaId="@vaca.VacaId"
+                                   class="btn btn-sm btn-tv-marron w-100">Publicar en venta</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
