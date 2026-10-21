@@ -49,6 +49,8 @@ public partial class Usuarios
 
     public virtual ICollection<ModeracionPublicaciones> ModeracionPublicaciones { get; set; } = new List<ModeracionPublicaciones>();
 
+    public virtual ICollection<Notificaciones> Notificaciones { get; set; } = new List<Notificaciones>();
+
     public virtual ICollection<PublicacionesLotePasto> PublicacionesLotePasto { get; set; } = new List<PublicacionesLotePasto>();
 
     public virtual ICollection<ReportesPublicacion> ReportesPublicacion { get; set; } = new List<ReportesPublicacion>();
