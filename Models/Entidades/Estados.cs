@@ -11,6 +11,8 @@ public partial class Estados
 
     public string Ambito { get; set; } = null!;
 
+    public virtual ICollection<Notificaciones> Notificaciones { get; set; } = new List<Notificaciones>();
+
     public virtual ICollection<PublicacionesLotePasto> PublicacionesLotePasto { get; set; } = new List<PublicacionesLotePasto>();
 
     public virtual ICollection<PublicacionesVaca> PublicacionesVaca { get; set; } = new List<PublicacionesVaca>();

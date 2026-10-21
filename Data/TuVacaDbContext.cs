@@ -28,6 +28,8 @@ public partial class TuVacaDbContext : DbContext
 
     public virtual DbSet<Municipios> Municipios { get; set; }
 
+    public virtual DbSet<Notificaciones> Notificaciones { get; set; }
+
     public virtual DbSet<ProduccionLeche> ProduccionLeche { get; set; }
 
     public virtual DbSet<PublicacionesLotePasto> PublicacionesLotePasto { get; set; }
@@ -41,6 +43,8 @@ public partial class TuVacaDbContext : DbContext
     public virtual DbSet<Roles> Roles { get; set; }
 
     public virtual DbSet<Sesiones> Sesiones { get; set; }
+
+    public virtual DbSet<TiposNotificacion> TiposNotificacion { get; set; }
 
     public virtual DbSet<TiposPublicacion> TiposPublicacion { get; set; }
 
@@ -60,9 +64,9 @@ public partial class TuVacaDbContext : DbContext
     {
         modelBuilder.Entity<ArriendosLote>(entity =>
         {
-            entity.HasKey(e => e.ArriendoId).HasName("PK__Arriendo__12D411D6E265CC41");
+            entity.HasKey(e => e.ArriendoId).HasName("PK__Arriendo__12D411D6B0B16DC2");
 
-            entity.HasIndex(e => e.PublicacionLoteId, "UQ__Arriendo__EFBB7ADD968B5BDC").IsUnique();
+            entity.HasIndex(e => e.PublicacionLoteId, "UQ__Arriendo__EFBB7ADDFDFB1DFF").IsUnique();
 
             entity.Property(e => e.ArriendoId).HasColumnName("ArriendoID");
             entity.Property(e => e.CompradorId).HasColumnName("CompradorID");
@@ -88,7 +92,7 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<AuditoriaUsuarios>(entity =>
         {
-            entity.HasKey(e => e.AuditoriaId).HasName("PK__Auditori__095694E37E61C263");
+            entity.HasKey(e => e.AuditoriaId).HasName("PK__Auditori__095694E364E26DAB");
 
             entity.Property(e => e.AuditoriaId).HasColumnName("AuditoriaID");
             entity.Property(e => e.Accion).HasMaxLength(30);
@@ -110,9 +114,9 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<CausasMuerte>(entity =>
         {
-            entity.HasKey(e => e.CausaMuerteId).HasName("PK__CausasMu__9522D7D23DB5E9E0");
+            entity.HasKey(e => e.CausaMuerteId).HasName("PK__CausasMu__9522D7D25ACD11B5");
 
-            entity.HasIndex(e => e.Nombre, "UQ__CausasMu__75E3EFCF1E2B0963").IsUnique();
+            entity.HasIndex(e => e.Nombre, "UQ__CausasMu__75E3EFCF10DA8AD4").IsUnique();
 
             entity.Property(e => e.CausaMuerteId).HasColumnName("CausaMuerteID");
             entity.Property(e => e.Nombre).HasMaxLength(60);
@@ -120,7 +124,7 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<Contactos>(entity =>
         {
-            entity.HasKey(e => e.ContactoId).HasName("PK__Contacto__8E0F85C8815055C6");
+            entity.HasKey(e => e.ContactoId).HasName("PK__Contacto__8E0F85C8B9731C8F");
 
             entity.HasIndex(e => e.CompradorId, "IX_Contactos_CompradorID");
 
@@ -146,11 +150,11 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<Departamentos>(entity =>
         {
-            entity.HasKey(e => e.DepartamentoId).HasName("PK__Departam__66BB0E1EE03A993C");
+            entity.HasKey(e => e.DepartamentoId).HasName("PK__Departam__66BB0E1E51F6CD6C");
 
-            entity.HasIndex(e => e.Nombre, "UQ__Departam__75E3EFCF430DC8CD").IsUnique();
+            entity.HasIndex(e => e.Nombre, "UQ__Departam__75E3EFCFA9FD968E").IsUnique();
 
-            entity.HasIndex(e => e.CodigoDane, "UQ__Departam__AFCA081ACBBC2189").IsUnique();
+            entity.HasIndex(e => e.CodigoDane, "UQ__Departam__AFCA081A85D1710A").IsUnique();
 
             entity.Property(e => e.DepartamentoId).HasColumnName("DepartamentoID");
             entity.Property(e => e.CodigoDane)
@@ -162,7 +166,7 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<Estados>(entity =>
         {
-            entity.HasKey(e => e.EstadoId).HasName("PK__Estados__FEF86B6003188EBD");
+            entity.HasKey(e => e.EstadoId).HasName("PK__Estados__FEF86B609AF67292");
 
             entity.HasIndex(e => new { e.EstadoId, e.Ambito }, "UQ_Estados_EstadoAmbito").IsUnique();
 
@@ -179,7 +183,7 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<ModeracionPublicaciones>(entity =>
         {
-            entity.HasKey(e => e.ModeracionId).HasName("PK__Moderaci__FCB0D9FB36AF4874");
+            entity.HasKey(e => e.ModeracionId).HasName("PK__Moderaci__FCB0D9FBF121F8AB");
 
             entity.Property(e => e.ModeracionId).HasColumnName("ModeracionID");
             entity.Property(e => e.Accion).HasMaxLength(15);
@@ -205,13 +209,13 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<Municipios>(entity =>
         {
-            entity.HasKey(e => e.MunicipioId).HasName("PK__Municipi__1EEFE56E9894028F");
+            entity.HasKey(e => e.MunicipioId).HasName("PK__Municipi__1EEFE56EE5FDAA62");
 
             entity.HasIndex(e => e.DepartamentoId, "IX_Municipios_DepartamentoID");
 
             entity.HasIndex(e => new { e.Nombre, e.DepartamentoId }, "UQ_Municipios_NombreDepartamento").IsUnique();
 
-            entity.HasIndex(e => e.CodigoDane, "UQ__Municipi__AFCA081A7B23E96C").IsUnique();
+            entity.HasIndex(e => e.CodigoDane, "UQ__Municipi__AFCA081AFC2AA12D").IsUnique();
 
             entity.Property(e => e.MunicipioId).HasColumnName("MunicipioID");
             entity.Property(e => e.CodigoDane)
@@ -227,9 +231,45 @@ public partial class TuVacaDbContext : DbContext
                 .HasConstraintName("FK_Municipios_Departamentos");
         });
 
+        modelBuilder.Entity<Notificaciones>(entity =>
+        {
+            entity.HasKey(e => e.NotificacionId).HasName("PK__Notifica__BCC120C4E6957AA2");
+
+            entity.HasIndex(e => new { e.UsuarioId, e.EstadoId, e.FechaProgramada }, "IX_Notificaciones_Usuario");
+
+            entity.Property(e => e.NotificacionId).HasColumnName("NotificacionID");
+            entity.Property(e => e.AmbitoEstado)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasComputedColumnSql("(CONVERT([varchar](20),'NOTIFICACION'))", true);
+            entity.Property(e => e.Enlace).HasMaxLength(300);
+            entity.Property(e => e.EstadoId)
+                .HasDefaultValue(40)
+                .HasColumnName("EstadoID");
+            entity.Property(e => e.FechaCreacion).HasDefaultValueSql("(sysdatetime())");
+            entity.Property(e => e.FechaProgramada).HasDefaultValueSql("(sysdatetime())");
+            entity.Property(e => e.Mensaje).HasMaxLength(500);
+            entity.Property(e => e.TipoNotificacionId).HasColumnName("TipoNotificacionID");
+            entity.Property(e => e.UsuarioId).HasColumnName("UsuarioID");
+
+            entity.HasOne(d => d.TipoNotificacion).WithMany(p => p.Notificaciones)
+                .HasForeignKey(d => d.TipoNotificacionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Notificaciones_TiposNotificacion");
+
+            entity.HasOne(d => d.Usuario).WithMany(p => p.Notificaciones)
+                .HasForeignKey(d => d.UsuarioId)
+                .HasConstraintName("FK_Notificaciones_Usuarios");
+
+            entity.HasOne(d => d.Estados).WithMany(p => p.Notificaciones)
+                .HasPrincipalKey(p => new { p.EstadoId, p.Ambito })
+                .HasForeignKey(d => new { d.EstadoId, d.AmbitoEstado })
+                .HasConstraintName("FK_Notificaciones_Estados");
+        });
+
         modelBuilder.Entity<ProduccionLeche>(entity =>
         {
-            entity.HasKey(e => e.ProduccionId).HasName("PK__Producci__6632E91D08BC7A63");
+            entity.HasKey(e => e.ProduccionId).HasName("PK__Producci__6632E91D6EB20D29");
 
             entity.HasIndex(e => e.VacaId, "IX_ProduccionLeche_VacaID");
 
@@ -248,7 +288,7 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<PublicacionesLotePasto>(entity =>
         {
-            entity.HasKey(e => e.PublicacionLoteId).HasName("PK__Publicac__EFBB7ADC62C0ECC5");
+            entity.HasKey(e => e.PublicacionLoteId).HasName("PK__Publicac__EFBB7ADC635571C4");
 
             entity.HasIndex(e => e.UsuarioId, "IX_PublicacionesLote_UsuarioID");
 
@@ -293,7 +333,7 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<PublicacionesVaca>(entity =>
         {
-            entity.HasKey(e => e.PublicacionVacaId).HasName("PK__Publicac__C7DFB69E791DED9D");
+            entity.HasKey(e => e.PublicacionVacaId).HasName("PK__Publicac__C7DFB69E2D3AD587");
 
             entity.HasIndex(e => e.VacaId, "IX_PublicacionesVaca_VacaID");
 
@@ -334,7 +374,7 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<RegistrosSanitarios>(entity =>
         {
-            entity.HasKey(e => e.RegistroId).HasName("PK__Registro__B897313E652C7284");
+            entity.HasKey(e => e.RegistroId).HasName("PK__Registro__B897313EAB810CD5");
 
             entity.HasIndex(e => e.VacaId, "IX_RegistrosSanitarios_VacaID");
 
@@ -370,7 +410,7 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<ReportesPublicacion>(entity =>
         {
-            entity.HasKey(e => e.ReporteId).HasName("PK__Reportes__0B29EA4ED5A1FF18");
+            entity.HasKey(e => e.ReporteId).HasName("PK__Reportes__0B29EA4E99133162");
 
             entity.Property(e => e.ReporteId).HasColumnName("ReporteID");
             entity.Property(e => e.FechaReporte).HasDefaultValueSql("(sysdatetime())");
@@ -395,9 +435,9 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<Roles>(entity =>
         {
-            entity.HasKey(e => e.RolId).HasName("PK__Roles__F92302D119FD32D7");
+            entity.HasKey(e => e.RolId).HasName("PK__Roles__F92302D1D80757AD");
 
-            entity.HasIndex(e => e.NombreRol, "UQ__Roles__4F0B537FE1352534").IsUnique();
+            entity.HasIndex(e => e.NombreRol, "UQ__Roles__4F0B537F08A66308").IsUnique();
 
             entity.Property(e => e.RolId).HasColumnName("RolID");
             entity.Property(e => e.NombreRol).HasMaxLength(30);
@@ -405,11 +445,11 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<Sesiones>(entity =>
         {
-            entity.HasKey(e => e.SesionId).HasName("PK__Sesiones__52FD7C06F15316F0");
+            entity.HasKey(e => e.SesionId).HasName("PK__Sesiones__52FD7C0665E06A3D");
 
             entity.HasIndex(e => e.UsuarioId, "IX_Sesiones_UsuarioID");
 
-            entity.HasIndex(e => e.Token, "UQ__Sesiones__1EB4F8175DB52F3C").IsUnique();
+            entity.HasIndex(e => e.Token, "UQ__Sesiones__1EB4F817A717A05D").IsUnique();
 
             entity.Property(e => e.SesionId).HasColumnName("SesionID");
             entity.Property(e => e.Activa).HasDefaultValue(true);
@@ -423,11 +463,23 @@ public partial class TuVacaDbContext : DbContext
                 .HasConstraintName("FK_Sesiones_Usuarios");
         });
 
+        modelBuilder.Entity<TiposNotificacion>(entity =>
+        {
+            entity.HasKey(e => e.TipoNotificacionId).HasName("PK__TiposNot__BE0583AD74ED5258");
+
+            entity.HasIndex(e => e.Nombre, "UQ__TiposNot__75E3EFCFDBA12289").IsUnique();
+
+            entity.Property(e => e.TipoNotificacionId)
+                .ValueGeneratedNever()
+                .HasColumnName("TipoNotificacionID");
+            entity.Property(e => e.Nombre).HasMaxLength(60);
+        });
+
         modelBuilder.Entity<TiposPublicacion>(entity =>
         {
-            entity.HasKey(e => e.TipoPublicacionId).HasName("PK__TiposPub__9015A7EAF352EA30");
+            entity.HasKey(e => e.TipoPublicacionId).HasName("PK__TiposPub__9015A7EA294F3329");
 
-            entity.HasIndex(e => e.Nombre, "UQ__TiposPub__75E3EFCF6C4359EF").IsUnique();
+            entity.HasIndex(e => e.Nombre, "UQ__TiposPub__75E3EFCFB2E79EF8").IsUnique();
 
             entity.Property(e => e.TipoPublicacionId).HasColumnName("TipoPublicacionID");
             entity.Property(e => e.Nombre).HasMaxLength(30);
@@ -435,9 +487,9 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<TiposRegistroSanitario>(entity =>
         {
-            entity.HasKey(e => e.TipoRegistroId).HasName("PK__TiposReg__16A7E9364F6F2056");
+            entity.HasKey(e => e.TipoRegistroId).HasName("PK__TiposReg__16A7E9366497978B");
 
-            entity.HasIndex(e => e.Nombre, "UQ__TiposReg__75E3EFCF41F38F59").IsUnique();
+            entity.HasIndex(e => e.Nombre, "UQ__TiposReg__75E3EFCF0533CC6E").IsUnique();
 
             entity.Property(e => e.TipoRegistroId).HasColumnName("TipoRegistroID");
             entity.Property(e => e.Nombre).HasMaxLength(30);
@@ -445,9 +497,9 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<TokensRecuperacion>(entity =>
         {
-            entity.HasKey(e => e.TokenId).HasName("PK__TokensRe__658FEE8AEAF3E0B6");
+            entity.HasKey(e => e.TokenId).HasName("PK__TokensRe__658FEE8A5809AE53");
 
-            entity.HasIndex(e => e.Token, "UQ__TokensRe__1EB4F817632D5CB6").IsUnique();
+            entity.HasIndex(e => e.Token, "UQ__TokensRe__1EB4F8177E97233A").IsUnique();
 
             entity.Property(e => e.TokenId).HasColumnName("TokenID");
             entity.Property(e => e.FechaCreacion).HasDefaultValueSql("(sysdatetime())");
@@ -461,13 +513,13 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<Usuarios>(entity =>
         {
-            entity.HasKey(e => e.UsuarioId).HasName("PK__Usuarios__2B3DE7982218F792");
+            entity.HasKey(e => e.UsuarioId).HasName("PK__Usuarios__2B3DE79846B0D274");
 
             entity.HasIndex(e => e.RolId, "IX_Usuarios_RolID");
 
-            entity.HasIndex(e => e.Correo, "UQ__Usuarios__60695A19898C77B5").IsUnique();
+            entity.HasIndex(e => e.Correo, "UQ__Usuarios__60695A19518B35A5").IsUnique();
 
-            entity.HasIndex(e => e.NumeroDocumento, "UQ__Usuarios__A420258823803471").IsUnique();
+            entity.HasIndex(e => e.NumeroDocumento, "UQ__Usuarios__A420258827BBA750").IsUnique();
 
             entity.Property(e => e.UsuarioId).HasColumnName("UsuarioID");
             entity.Property(e => e.AmbitoEstado)
@@ -500,11 +552,11 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<Vacas>(entity =>
         {
-            entity.HasKey(e => e.VacaId).HasName("PK__Vacas__1A38182249266BC0");
+            entity.HasKey(e => e.VacaId).HasName("PK__Vacas__1A381822281D44E0");
 
             entity.HasIndex(e => e.UsuarioId, "IX_Vacas_UsuarioID");
 
-            entity.HasIndex(e => e.Identificacion, "UQ__Vacas__D6F931E57A3F427C").IsUnique();
+            entity.HasIndex(e => e.Identificacion, "UQ__Vacas__D6F931E5C5931DF7").IsUnique();
 
             entity.Property(e => e.VacaId).HasColumnName("VacaID");
             entity.Property(e => e.AmbitoEstado)
@@ -546,9 +598,9 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<VentasExternas>(entity =>
         {
-            entity.HasKey(e => e.VentaExternaId).HasName("PK__VentasEx__FBCD1E0803A2FF2C");
+            entity.HasKey(e => e.VentaExternaId).HasName("PK__VentasEx__FBCD1E086E61BD81");
 
-            entity.HasIndex(e => e.VacaId, "UQ__VentasEx__1A381823B1C65781").IsUnique();
+            entity.HasIndex(e => e.VacaId, "UQ__VentasEx__1A3818233E8AA062").IsUnique();
 
             entity.Property(e => e.VentaExternaId).HasColumnName("VentaExternaID");
             entity.Property(e => e.CompradorNombre).HasMaxLength(150);
@@ -569,9 +621,9 @@ public partial class TuVacaDbContext : DbContext
 
         modelBuilder.Entity<VentasPlataforma>(entity =>
         {
-            entity.HasKey(e => e.VentaPlataformaId).HasName("PK__VentasPl__07D39219C724DD55");
+            entity.HasKey(e => e.VentaPlataformaId).HasName("PK__VentasPl__07D39219314D8B1A");
 
-            entity.HasIndex(e => e.PublicacionVacaId, "UQ__VentasPl__C7DFB69F6E2BB8BE").IsUnique();
+            entity.HasIndex(e => e.PublicacionVacaId, "UQ__VentasPl__C7DFB69F1CAEBAE9").IsUnique();
 
             entity.Property(e => e.VentaPlataformaId).HasColumnName("VentaPlataformaID");
             entity.Property(e => e.CompradorId).HasColumnName("CompradorID");

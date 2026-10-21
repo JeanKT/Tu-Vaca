@@ -33,6 +33,7 @@ builder.Services
 builder.Services.AddAuthorization();
 
 // Servicios de los demás casos de uso (cada rama agrega aquí su línea):
+builder.Services.AddScoped<TuVaca.Servicios.NotificacionService>();
 
 var app = builder.Build();
 
