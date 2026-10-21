@@ -1,0 +1,74 @@
+﻿@using TuVaca.Comun
+@model List<TuVaca.Models.Publicaciones.PublicacionListadoItem>
+@{
+    ViewData["Title"] = "Mis publicaciones";
+}
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+            <h1 class="tv-titulo h3 mb-0">Mis publicaciones</h1>
+            <p class="text-muted small mb-0">Para publicar una vaca, entra a "Mis vacas" y usa "Publicar en venta".</p>
+        </div>
+        <a asp-controller="Vacas" asp-action="Index" class="btn btn-tv-outline">Ir a Mis vacas</a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="card tv-card">
+            <div class="card-body text-center py-5">
+                <p class="text-muted mb-3">Todavía no tienes publicaciones.</p>
+                <a asp-controller="Vacas" asp-action="Index" class="btn btn-tv">Ir a Mis vacas</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var publicacion in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card tv-card h-100">
+                        <img src="@publicacion.FotoUrl" alt="Foto de la vaca @publicacion.Identificacion" class="tv-foto" />
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <h2 class="h5 mb-1">@Formatos.Pesos(publicacion.Precio)</h2>
+                                <span class="badge @ClaseEstado(publicacion.EstadoId)">@publicacion.Estado</span>
+                            </div>
+                            <p class="tv-dato mb-1">Vaca @publicacion.Identificacion · @publicacion.Raza</p>
+                            <p class="tv-dato mb-1">@publicacion.Ubicacion</p>
+                            <p class="small mb-2">@publicacion.Descripcion</p>
+                            <p class="text-muted small mb-0">Publicada el @Formatos.Fecha(publicacion.FechaPublicacion)</p>
+                            @if (!string.IsNullOrEmpty(publicacion.MotivoRechazo))
+                            {
+                                <p class="text-danger small mt-2 mb-0">Motivo: @publicacion.MotivoRechazo</p>
+                            }
+                        </div>
+                        @* FA-2-CU03: pausar una publicación activa *@
+                        @if (publicacion.EstadoId == Catalogos.PublicacionActiva)
+                        {
+                            <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
+                                <form asp-controller="Publicaciones" asp-action="Pausar" asp-route-id="@publicacion.PublicacionVacaId"
+                                      method="post" onsubmit="return confirm('¿Pausar la publicación? Los compradores dejarán de verla.');">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">Pausar publicación</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@functions {
+    private static string ClaseEstado(int estadoId) => estadoId switch
+    {
+        Catalogos.PublicacionActiva => "text-bg-success",
+        Catalogos.PublicacionPausada => "text-bg-secondary",
+        Catalogos.PublicacionVendida => "text-bg-primary",
+        Catalogos.PublicacionRechazada => "text-bg-danger",
+        Catalogos.PublicacionCancelada => "text-bg-dark",
+        _ => "text-bg-light"
+    };
+}
