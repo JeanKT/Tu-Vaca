@@ -57,5 +57,5 @@ TestResult.xml
 nunit-*.xml
 
 .vs/
-   wwwroot/uploads/
-   *.user
+wwwroot/uploads/
+*.user
