@@ -1,0 +1,105 @@
+﻿@using TuVaca.Comun
+@using TuVaca.Seguridad
+@inject Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentSelector SelectorComponentes
+@{
+    var autenticado = User.EstaAutenticado();
+    var rol = User.ObtenerRol();
+    var esProductor = rol == Catalogos.RolProductor;
+    var controladorActual = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+
+    // Cada enlace se activa solo cuando existe el controlador de su caso de uso
+    var urlMisVacas = Url.Action("Index", "Vacas");                 // CU-02
+    var urlMisPublicaciones = Url.Action("Index", "Publicaciones"); // CU-03
+    var urlMarketplace = Url.Action("Index", "Marketplace");        // CU-05 (pendiente)
+    var urlProduccion = Url.Action("Index", "Produccion");          // CU-11 (pendiente)
+    var hayCampanita = SelectorComponentes.SelectComponent("Campanita") != null;
+
+    // "Mi hato": sin sesión lleva a iniciar sesión (como en el prototipo); con sesión, a "Mis vacas"
+    var urlMiHato = autenticado ? urlMisVacas : Url.Action("Login", "Account");
+    var mostrarMiHato = !autenticado || esProductor;
+
+    string ClaseEnlace(string controlador) =>
+        controladorActual == controlador ? "nav-link active" : "nav-link";
+}
+<nav class="navbar navbar-expand-lg tv-navbar">
+    <div class="container-fluid px-0">
+        <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
+            <img src="~/images/tuvagalogo.jpeg" alt="Tu Vaca" class="tv-logo-nav" />
+            Tu Vaca
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+                aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="menuPrincipal">
+            <ul class="navbar-nav me-auto ms-lg-3">
+                <li class="nav-item">
+                    <a class="@ClaseEnlace("Home")" asp-controller="Home" asp-action="Index">Inicio</a>
+                </li>
+                @if (mostrarMiHato)
+                {
+                    <li class="nav-item">
+                        @if (urlMiHato != null)
+                        {
+                            <a class="@ClaseEnlace("Vacas")" href="@urlMiHato">Mi hato</a>
+                        }
+                        else
+                        {
+                            <span class="nav-link disabled" title="Próximamente">Mi hato</span>
+                        }
+                    </li>
+                }
+                @if (esProductor && urlMisPublicaciones != null)
+                {
+                    <li class="nav-item">
+                        <a class="@ClaseEnlace("Publicaciones")" href="@urlMisPublicaciones">Mis publicaciones</a>
+                    </li>
+                }
+                <li class="nav-item">
+                    @if (urlMarketplace != null)
+                    {
+                        <a class="@ClaseEnlace("Marketplace")" href="@urlMarketplace">Marketplace</a>
+                    }
+                    else
+                    {
+                        <span class="nav-link disabled" title="Próximamente">Marketplace</span>
+                    }
+                </li>
+                <li class="nav-item">
+                    @if (urlProduccion != null)
+                    {
+                        <a class="@ClaseEnlace("Produccion")" href="@urlProduccion">Producción</a>
+                    }
+                    else
+                    {
+                        <span class="nav-link disabled" title="Próximamente">Producción</span>
+                    }
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link disabled" title="Próximamente">Ayuda</span>
+                </li>
+            </ul>
+
+            <div class="d-flex flex-wrap align-items-center gap-2 py-2 py-lg-0">
+                @if (autenticado)
+                {
+                    if (hayCampanita)
+                    {
+                        @await Component.InvokeAsync("Campanita")
+                    }
+                    <span class="tv-usuario">@User.ObtenerNombre() · @rol</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                        <button type="submit" class="btn btn-sm btn-outline-light">Cerrar sesión</button>
+                    </form>
+                }
+                else
+                {
+                    <span class="tv-usuario">Invitado · Sin sesión</span>
+                    <a class="btn btn-sm btn-light" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+                    <a class="btn btn-sm btn-outline-light" asp-controller="Account" asp-action="Register">Registrarse</a>
+                }
+            </div>
+        </div>
+    </div>
+</nav>
