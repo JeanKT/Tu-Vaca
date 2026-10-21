@@ -1,0 +1,48 @@
+﻿@using TuVaca.Seguridad
+@model TuVaca.Models.Cuentas.RestablecerContrasenaViewModel
+@{
+    ViewData["Title"] = "Nueva contraseña";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="card tv-card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <img src="~/images/tuvagalogo.jpeg" alt="Tu Vaca" class="tv-logo" />
+                        <h1 class="tv-titulo h3 mt-3 mb-1">Crea tu nueva contraseña</h1>
+                        <p class="text-muted small mb-0">@Contrasenas.MensajeRegla</p>
+                    </div>
+
+                    <form asp-controller="RecuperarContrasena" asp-action="Restablecer" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+                        <input asp-for="Token" type="hidden" />
+
+                        <div class="mb-3">
+                            <label asp-for="NuevaContrasena" class="form-label"></label>
+                            <input asp-for="NuevaContrasena" class="form-control" autocomplete="new-password" autofocus />
+                            <span asp-validation-for="NuevaContrasena" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ConfirmarContrasena" class="form-label"></label>
+                            <input asp-for="ConfirmarContrasena" class="form-control" autocomplete="new-password" />
+                            <span asp-validation-for="ConfirmarContrasena" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            @* FA-1-CU23 *@
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-tv-outline w-50">Cancelar</a>
+                            <button type="submit" class="btn btn-tv w-50">Restablecer contraseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
