@@ -1,0 +1,169 @@
+﻿@{
+    ViewData["Title"] = "Crear cuenta nueva";
+}
+
+<style>
+    body {
+        background-color: #f5f4ed;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        color: #2b2b2b;
+    }
+
+    .navbar-custom {
+        background-color: #275d38;
+        padding: 12px 28px;
+    }
+
+    .navbar-brand {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1.3rem;
+        text-decoration: none;
+    }
+
+    .brand-logo-nav {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 8px;
+    }
+
+    .register-container {
+        max-width: 600px;
+        margin: 40px auto;
+    }
+
+    .register-card {
+        background-color: #ffffff;
+        border: 1px solid #e3e1d5;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        padding: 36px;
+    }
+
+    .register-logo {
+        width: 85px;
+        height: 85px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .register-title {
+        font-family: Georgia, serif;
+        font-size: 1.6rem;
+        color: #1e2d24;
+        font-weight: 700;
+    }
+
+    .form-label-custom {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #555;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .form-control-custom, .form-select-custom {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        width: 100%;
+        margin-bottom: 16px;
+    }
+
+    .btn-submit-brown {
+        background-color: #9e673a;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 12px;
+        width: 100%;
+        font-size: 1rem;
+        transition: background-color 0.2s;
+    }
+
+        .btn-submit-brown:hover {
+            background-color: #83522c;
+            color: #ffffff;
+        }
+</style>
+
+<!-- Navbar Superior con Logo -->
+<div class="navbar-custom d-flex justify-content-between align-items-center">
+    <a class="navbar-brand d-flex align-items-center" href="@Url.Action("Index", "Home")">
+        <img src="/images/tuvagalogo.jpeg" alt="Tu Vaca" class="brand-logo-nav" />
+        Tu Vaca
+    </a>
+</div>
+
+<div class="register-container">
+    <div class="register-card">
+        <div class="text-center">
+            <!-- Logo principal corregido -->
+            <img src="/images/tuvagalogo.jpeg" alt="Tu Vaca" class="register-logo" />
+            <h2 class="register-title">Crear cuenta nueva</h2>
+            <p class="text-muted small mb-4">Completa tus datos para unirte a la plataforma</p>
+        </div>
+
+        <form method="post" action="@Url.Action("Register", "Account")">
+            <div class="row">
+                <div class="col-md-6 text-start">
+                    <label class="form-label-custom">Nombre Completo</label>
+                    <input type="text" name="fullName" class="form-control-custom" placeholder="Ej. Luz Marina Cardona" required />
+                </div>
+                <div class="col-md-6 text-start">
+                    <label class="form-label-custom">Cédula</label>
+                    <input type="text" name="document" class="form-control-custom" placeholder="Ej. 43.118.902" required />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 text-start">
+                    <label class="form-label-custom">Municipio</label>
+                    <select name="municipality" class="form-select-custom">
+                        <option value="">Seleccione...</option>
+                        <option value="Sonsón">Sonsón, Antioquia</option>
+                        <option value="La Unión">La Unión, Antioquia</option>
+                        <option value="Bojacá">Bojacá, Cundinamarca</option>
+                    </select>
+                </div>
+                <div class="col-md-6 text-start">
+                    <label class="form-label-custom">Teléfono</label>
+                    <input type="text" name="phone" class="form-control-custom" placeholder="Ej. +57 310 442 7781" required />
+                </div>
+            </div>
+
+            <div class="text-start">
+                <label class="form-label-custom">Rol</label>
+                <select name="role" class="form-select-custom">
+                    <option value="Productor">Productor / Vendedor</option>
+                    <option value="Comprador">Comprador</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 text-start">
+                    <label class="form-label-custom">Contraseña</label>
+                    <input type="password" name="password" class="form-control-custom" placeholder="••••••••" required />
+                </div>
+                <div class="col-md-6 text-start">
+                    <label class="form-label-custom">Confirmar Contraseña</label>
+                    <input type="password" name="confirmPassword" class="form-control-custom" placeholder="••••••••" required />
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit-brown mt-2">Registrarme</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="@Url.Action("Login", "Account")" class="small text-muted text-decoration-none">← Volver al inicio de sesión</a>
+        </div>
+    </div>
+</div>
