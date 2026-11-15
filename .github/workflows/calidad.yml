@@ -18,6 +18,8 @@ env:
 jobs:
   calidad:
     runs-on: windows-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,14 +36,10 @@ jobs:
 
       - name: Instalar SonarScanner
         if: ${{ env.SONAR_TOKEN != '' }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: Iniciar análisis de SonarCloud
         if: ${{ env.SONAR_TOKEN != '' }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
           dotnet sonarscanner begin
           /k:"${{ env.SONAR_PROJECT }}" /o:"${{ env.SONAR_ORG }}"
@@ -59,6 +57,4 @@ jobs:
 
       - name: Terminar análisis de SonarCloud
         if: ${{ env.SONAR_TOKEN != '' }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
