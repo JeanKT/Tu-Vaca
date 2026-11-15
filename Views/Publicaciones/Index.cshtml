@@ -47,14 +47,34 @@
                                 <p class="text-danger small mt-2 mb-0">Motivo: @publicacion.MotivoRechazo</p>
                             }
                         </div>
-                        @* FA-2-CU03: pausar una publicación activa *@
-                        @if (publicacion.EstadoId == Catalogos.PublicacionActiva)
+                        @if (publicacion.EstadoId == Catalogos.PublicacionActiva || publicacion.EstadoId == Catalogos.PublicacionPausada)
                         {
-                            <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
-                                <form asp-controller="Publicaciones" asp-action="Pausar" asp-route-id="@publicacion.PublicacionVacaId"
-                                      method="post" onsubmit="return confirm('¿Pausar la publicación? Los compradores dejarán de verla.');">
-                                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">Pausar publicación</button>
-                                </form>
+                            <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3 d-grid gap-2">
+                                @if (publicacion.EstadoId == Catalogos.PublicacionActiva)
+                                {
+                                    @* FA-2-CU03: pausar una publicación activa *@
+                                    <form asp-controller="Publicaciones" asp-action="Pausar" asp-route-id="@publicacion.PublicacionVacaId"
+                                          method="post" onsubmit="return confirm('¿Pausar la publicación? Los compradores dejarán de verla.');">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary w-100">Pausar publicación</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Publicaciones" asp-action="Reanudar" asp-route-id="@publicacion.PublicacionVacaId" method="post">
+                                        <button type="submit" class="btn btn-sm btn-outline-success w-100">Reanudar publicación</button>
+                                    </form>
+                                }
+                                <div class="d-flex gap-2">
+                                    @* CU-16 *@
+                                    <a asp-controller="Publicaciones" asp-action="Editar" asp-route-id="@publicacion.PublicacionVacaId"
+                                       class="btn btn-sm btn-tv-outline flex-fill">✏️ Editar</a>
+                                    @* CU-17: pide confirmación (paso 3) *@
+                                    <form asp-controller="Publicaciones" asp-action="Eliminar" asp-route-id="@publicacion.PublicacionVacaId"
+                                          method="post" class="flex-fill"
+                                          onsubmit="return confirm('¿Deseas eliminar esta publicación? Esta acción no se puede deshacer.');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">🗑 Eliminar</button>
+                                    </form>
+                                </div>
                             </div>
                         }
                     </div>

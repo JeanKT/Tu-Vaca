@@ -10,7 +10,10 @@ using TuVaca.Seguridad;
 
 namespace TuVaca.Controllers
 {
-    /// <summary>CU-03: Publicar vaca en venta, el listado "Mis publicaciones" y pausar (FA-2).</summary>
+    /// <summary>
+    /// CU-03: Publicar vaca en venta, "Mis publicaciones", pausar (FA-2) y reanudar.
+    /// CU-16: Editar publicación. CU-17: Eliminar publicación.
+    /// </summary>
     [Authorize(Roles = Catalogos.RolProductor)]
     public class PublicacionesController : Controller
     {
@@ -223,7 +226,187 @@ namespace TuVaca.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // POST /Publicaciones/Reanudar/5: vuelve a mostrar una publicación pausada (RN-5-CU03)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reanudar(int id)
+        {
+            var publicacion = await BuscarPublicacionPropiaAsync(id);
+            if (publicacion == null)
+            {
+                return NotFound();
+            }
+            if (publicacion.EstadoId != Catalogos.PublicacionPausada)
+            {
+                TempData["Error"] = "Solo se pueden reanudar publicaciones pausadas.";
+                return RedirectToAction(nameof(Index));
+            }
+            if (await TienePublicacionActivaAsync(publicacion.VacaId))
+            {
+                TempData["Error"] = MensajeYaPublicada;
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                publicacion.EstadoId = Catalogos.PublicacionActiva;
+                publicacion.FechaActualizacion = DateTime.Now;
+                await _db.SaveChangesAsync();
+                TempData["Exito"] = "La publicación está activa otra vez.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "CU-03: error al reanudar la publicación {Id}", id);
+                TempData["Error"] = "No fue posible reanudar la publicación. Intenta nuevamente.";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // ============================== CU-16 ==============================
+
+        // GET /Publicaciones/Editar/5  (pasos 1 a 3)
+        [HttpGet]
+        public async Task<IActionResult> Editar(int id)
+        {
+            var publicacion = await BuscarPublicacionPropiaAsync(id);
+            if (publicacion == null)
+            {
+                return NotFound(); // RN-1-CU16
+            }
+            if (!SePuedeModificar(publicacion.EstadoId))
+            {
+                TempData["Error"] = "Solo se pueden editar publicaciones activas o pausadas."; // FE-3 / RN-4
+                return RedirectToAction(nameof(Index));
+            }
+
+            var vaca = await _db.Vacas.FirstAsync(v => v.VacaId == publicacion.VacaId);
+            var modelo = new EditarPublicacionViewModel
+            {
+                PublicacionVacaId = publicacion.PublicacionVacaId,
+                VacaResumen = $"Vaca {vaca.Identificacion} · {vaca.Raza} · {vaca.Sexo}",
+                FotoActualUrl = publicacion.FotoUrl,
+                Precio = publicacion.Precio,
+                Descripcion = publicacion.Descripcion,
+                MunicipioId = publicacion.MunicipioId,
+                DepartamentoId = await _db.Municipios
+                    .Where(m => m.MunicipioId == publicacion.MunicipioId)
+                    .Select(m => (int?)m.DepartamentoId)
+                    .FirstOrDefaultAsync()
+            };
+
+            await CargarDepartamentosAsync();
+            return View(modelo);
+        }
+
+        // POST /Publicaciones/Editar  (pasos 4 a 7)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(EditarPublicacionViewModel modelo)
+        {
+            var publicacion = await BuscarPublicacionPropiaAsync(modelo.PublicacionVacaId);
+            if (publicacion == null)
+            {
+                return NotFound();
+            }
+            modelo.FotoActualUrl = publicacion.FotoUrl;
+            var vaca = await _db.Vacas.FirstAsync(v => v.VacaId == publicacion.VacaId);
+            modelo.VacaResumen = $"Vaca {vaca.Identificacion} · {vaca.Raza} · {vaca.Sexo}";
+
+            if (!SePuedeModificar(publicacion.EstadoId))
+            {
+                ModelState.AddModelError(string.Empty, "Solo se pueden editar publicaciones activas o pausadas.");
+            }
+            if (modelo.MunicipioId != null && !await _db.Municipios.AnyAsync(m => m.MunicipioId == modelo.MunicipioId))
+            {
+                ModelState.AddModelError(nameof(modelo.MunicipioId), "Selecciona un municipio válido.");
+            }
+            var errorFoto = Fotos.Validar(modelo.FotoNueva);
+            if (errorFoto != null)
+            {
+                ModelState.AddModelError(nameof(modelo.FotoNueva), errorFoto);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await CargarDepartamentosAsync();
+                return View(modelo); // FE-2
+            }
+
+            try
+            {
+                if (modelo.FotoNueva != null && modelo.FotoNueva.Length > 0)
+                {
+                    publicacion.FotoUrl = await Fotos.GuardarAsync(modelo.FotoNueva, _entorno.WebRootPath, "publicaciones");
+                }
+                // Paso 6 (RN-2: la vaca no cambia)
+                publicacion.Precio = modelo.Precio!.Value;
+                publicacion.Descripcion = modelo.Descripcion.Trim();
+                publicacion.MunicipioId = modelo.MunicipioId!.Value;
+                publicacion.FechaActualizacion = DateTime.Now; // RN-5
+                await _db.SaveChangesAsync();
+
+                TempData["Exito"] = "La publicación quedó actualizada.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "CU-16: error al editar la publicación {Id}", modelo.PublicacionVacaId);
+                ModelState.AddModelError(string.Empty, "No fue posible actualizar la publicación. Intenta nuevamente."); // FE-1
+                await CargarDepartamentosAsync();
+                return View(modelo);
+            }
+        }
+
+        // ============================== CU-17 ==============================
+
+        // POST /Publicaciones/Eliminar/5  (pasos 2 a 6; la confirmación del paso 3 la pide la vista)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            var publicacion = await BuscarPublicacionPropiaAsync(id);
+            if (publicacion == null)
+            {
+                return NotFound(); // RN-1-CU17
+            }
+            // RN-2 / FE-2: una publicación vendida se conserva como historial
+            if (!SePuedeModificar(publicacion.EstadoId))
+            {
+                TempData["Error"] = "Esta publicación no se puede eliminar.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                // Se retira de las búsquedas cambiando su estado a "Cancelada":
+                // los mensajes de compradores que la referencian se conservan y queda la fecha (RN-4).
+                // La vaca NO se elimina y se puede volver a publicar (RN-3).
+                publicacion.EstadoId = Catalogos.PublicacionCancelada;
+                publicacion.FechaActualizacion = DateTime.Now;
+                await _db.SaveChangesAsync();
+                TempData["Exito"] = "La publicación fue eliminada. La vaca sigue en \"Mis vacas\" y puedes volver a publicarla.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "CU-17: error al eliminar la publicación {Id}", id);
+                TempData["Error"] = "No fue posible eliminar la publicación. Intenta nuevamente."; // FE-1
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
         // ============================== APOYO ==============================
+
+        private static bool SePuedeModificar(int estadoId) =>
+            estadoId == Catalogos.PublicacionActiva || estadoId == Catalogos.PublicacionPausada;
+
+        private Task<PublicacionesVaca?> BuscarPublicacionPropiaAsync(int id)
+        {
+            var usuarioId = User.ObtenerUsuarioId()!.Value;
+            return (from p in _db.PublicacionesVaca
+                    join v in _db.Vacas on p.VacaId equals v.VacaId
+                    where p.PublicacionVacaId == id && v.UsuarioId == usuarioId
+                    select p).FirstOrDefaultAsync();
+        }
 
         private Task<Vacas?> BuscarVacaPropiaAsync(int vacaId)
         {

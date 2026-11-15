@@ -1,0 +1,79 @@
+@model TuVaca.Models.Publicaciones.EditarPublicacionViewModel
+@{
+    ViewData["Title"] = "Editar publicación";
+}
+
+<div class="container py-4">
+    <h1 class="tv-titulo h3 mb-1">Editar publicación</h1>
+    <p class="text-muted mb-4">@Model.VacaResumen</p>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card tv-card">
+                <img src="@Model.FotoActualUrl" alt="Foto actual de la publicación" class="tv-foto" />
+                <div class="card-body small text-muted">Foto actual de la publicación</div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card tv-card shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-controller="Publicaciones" asp-action="Editar" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+                        <input asp-for="PublicacionVacaId" type="hidden" />
+
+                        <div class="mb-3">
+                            <label asp-for="Precio" class="form-label">Precio de venta (pesos) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="Precio" type="number" min="1" step="1" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Precio" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label">Descripción *</label>
+                            <textarea asp-for="Descripcion" rows="4" class="form-control"></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DepartamentoId" class="form-label">Departamento *</label>
+                                <select asp-for="DepartamentoId" asp-items="ViewBag.Departamentos" class="form-select"
+                                        data-municipios="MunicipioId" data-url="@Url.Action("Municipios", "Ubicaciones")">
+                                    <option value="">Selecciona…</option>
+                                </select>
+                                <span asp-validation-for="DepartamentoId" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="MunicipioId" class="form-label">Municipio *</label>
+                                <select asp-for="MunicipioId" class="form-select" data-seleccionado="@Model.MunicipioId" disabled>
+                                    <option value="">Selecciona primero el departamento</option>
+                                </select>
+                                <span asp-validation-for="MunicipioId" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="FotoNueva" class="form-label"></label>
+                            <input asp-for="FotoNueva" class="form-control" accept="image/jpeg,image/png,image/webp" />
+                            <div class="form-text">Déjalo vacío para conservar la foto actual. Máximo 2 MB.</div>
+                            <span asp-validation-for="FotoNueva" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            @* FA-1-CU16: cancelar descarta los cambios *@
+                            <a asp-controller="Publicaciones" asp-action="Index" class="btn btn-tv-outline w-50">Cancelar</a>
+                            <button type="submit" class="btn btn-tv w-50">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/ubicaciones.js" asp-append-version="true"></script>
+}
