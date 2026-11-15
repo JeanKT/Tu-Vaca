@@ -23,5 +23,13 @@
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
   </ItemGroup>
 
+  <!-- El proyecto de pruebas vive en una subcarpeta: no se compila dentro de la aplicación -->
+  <ItemGroup>
+    <Compile Remove="TuVaca.Tests\**" />
+    <Content Remove="TuVaca.Tests\**" />
+    <EmbeddedResource Remove="TuVaca.Tests\**" />
+    <None Remove="TuVaca.Tests\**" />
+  </ItemGroup>
+
 </Project>
  

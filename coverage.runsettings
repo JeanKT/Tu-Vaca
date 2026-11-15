@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Configuración de cobertura (coverlet) para TuVaca.Tests.
+  Se mide la lógica de la aplicación: controladores, servicios, seguridad, clases comunes y modelos de vista.
+  Se excluye lo que no es lógica propia o que no se puede ejecutar en una prueba unitaria:
+   - Vistas Razor compiladas (AspNetCoreGeneratedDocument)
+   - Entidades y DbContext generados por scaffold de EF Core (Models/Entidades, Data)
+   - Program.cs (arranque) y CorreoService (necesita un servidor SMTP real)
+  Uso:  dotnet test --settings coverage.runsettings --collect:"XPlat Code Coverage"
+-->
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura,opencover</Format>
+          <Include>[TUVACA]*</Include>
+          <Exclude>[TUVACA]AspNetCoreGeneratedDocument.*,[TUVACA]TuVaca.Models.Entidades.*,[TUVACA]TuVaca.Data.*</Exclude>
+          <ExcludeByFile>**/Program.cs,**/Servicios/CorreoService.cs,**/Models/Entidades/*.cs,**/Data/*.cs</ExcludeByFile>
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+          <SkipAutoProps>true</SkipAutoProps>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
