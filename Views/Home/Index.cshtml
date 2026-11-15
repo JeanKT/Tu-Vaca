@@ -23,6 +23,7 @@
                     <a asp-controller="Account" asp-action="Login" class="btn btn-tv px-4 py-2 fw-semibold">Iniciar Sesión</a>
                     <a asp-controller="Account" asp-action="Register" class="btn btn-tv-marron px-4 py-2 fw-semibold">Registrarse</a>
                 </div>
+                <a asp-controller="Marketplace" asp-action="Index" class="d-inline-block mt-3">Ver vacas en venta sin registrarme →</a>
             }
             else
             {
@@ -31,6 +32,7 @@
                 {
                     <a href="@urlMisVacas" class="btn btn-tv px-4 py-2 fw-semibold">Ir a Mi hato</a>
                 }
+                <a asp-controller="Marketplace" asp-action="Index" class="btn btn-tv-outline px-4 py-2 fw-semibold ms-2">Ir al Marketplace</a>
             }
         </div>
     </div>

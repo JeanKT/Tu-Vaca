@@ -1,0 +1,62 @@
+@using TuVaca.Comun
+@using TuVaca.Seguridad
+@model TuVaca.Models.Marketplace.MarketplaceDetalleViewModel
+@{
+    ViewData["Title"] = "Detalle de la publicación";
+    var esMiPublicacion = User.ObtenerUsuarioId() == Model.VendedorId;
+    // El botón se activa solo cuando exista el CU-06 (ContactosController)
+    var urlContactar = Url.Action("Crear", "Contactos", new { publicacionId = Model.PublicacionVacaId });
+}
+
+<div class="container py-4">
+    <a asp-action="Index" class="btn btn-sm btn-outline-secondary mb-3">← Volver al Marketplace</a>
+
+    <div class="card tv-card">
+        <div class="row g-0">
+            <div class="col-md-6">
+                <img src="@Model.FotoUrl" alt="Vaca @Model.Identificacion" class="tv-foto h-100" style="min-height:320px" />
+            </div>
+            <div class="col-md-6">
+                <div class="card-body p-4">
+                    <h1 class="tv-titulo h3 mb-1">@Formatos.Pesos(Model.Precio)</h1>
+                    <p class="text-muted small mb-3">Publicada el @Formatos.Fecha(Model.FechaPublicacion) · 📍 @Model.Ubicacion</p>
+
+                    <h2 class="h6 fw-bold">Datos de la vaca</h2>
+                    <table class="table table-sm mb-3">
+                        <tbody>
+                            <tr><th class="fw-normal text-muted">Identificación</th><td>@Model.Identificacion</td></tr>
+                            <tr><th class="fw-normal text-muted">Raza</th><td>@Model.Raza</td></tr>
+                            <tr><th class="fw-normal text-muted">Sexo</th><td>@Model.Sexo</td></tr>
+                            <tr><th class="fw-normal text-muted">Edad</th><td>@Formatos.Edad(Model.FechaNacimiento)</td></tr>
+                            <tr><th class="fw-normal text-muted">Peso</th><td>@Model.Peso.ToString("0.#") kg</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h2 class="h6 fw-bold">Descripción</h2>
+                    <p class="small">@Model.Descripcion</p>
+
+                    <h2 class="h6 fw-bold">Vendedor</h2>
+                    <p class="mb-1">@Model.VendedorNombre</p>
+                    @if (!string.IsNullOrWhiteSpace(Model.VendedorTelefono))
+                    {
+                        @* FA-2-CU06: contacto directo por datos visibles *@
+                        <p class="tv-dato mb-3">📞 @Model.VendedorTelefono</p>
+                    }
+
+                    @if (esMiPublicacion)
+                    {
+                        <div class="alert alert-info small mb-0">Esta es tu publicación.</div>
+                    }
+                    else if (urlContactar != null)
+                    {
+                        <a href="@urlContactar" class="btn btn-tv w-100">Contactar vendedor</a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-tv w-100" disabled title="Próximamente">Contactar vendedor</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
