@@ -10,7 +10,10 @@
             <h1 class="tv-titulo h3 mb-0">Mis publicaciones</h1>
             <p class="text-muted small mb-0">Para publicar una vaca, entra a "Mis vacas" y usa "Publicar en venta".</p>
         </div>
-        <a asp-controller="Vacas" asp-action="Index" class="btn btn-tv-outline">Ir a Mis vacas</a>
+        <div class="d-flex gap-2">
+            <a asp-controller="Contactos" asp-action="Recibidos" class="btn btn-tv-outline">Mensajes recibidos</a>
+            <a asp-controller="Vacas" asp-action="Index" class="btn btn-tv-outline">Ir a Mis vacas</a>
+        </div>
     </div>
 
     @if (Model.Count == 0)

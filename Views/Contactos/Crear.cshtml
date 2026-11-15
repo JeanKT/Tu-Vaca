@@ -1,0 +1,43 @@
+@using TuVaca.Comun
+@model TuVaca.Models.Contactos.ContactarViewModel
+@{
+    ViewData["Title"] = "Contactar vendedor";
+}
+
+<div class="container py-4" style="max-width:720px">
+    <h1 class="tv-titulo h3 mb-3">Contactar vendedor</h1>
+
+    @* Paso 3: datos de la publicación referenciada *@
+    <div class="card tv-card mb-3">
+        <div class="card-body d-flex gap-3 align-items-center">
+            <img src="@Model.FotoUrl" alt="Foto de la publicación" class="tv-foto-mini" />
+            <div>
+                <p class="fw-semibold mb-0">@Model.Resumen</p>
+                <p class="mb-0">@Formatos.Pesos(Model.Precio)</p>
+                <p class="text-muted small mb-0">Vendedor: @Model.VendedorNombre</p>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Crear" method="post" class="card tv-card">
+        <div class="card-body">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="PublicacionVacaId" />
+
+            <label asp-for="Mensaje" class="form-label"></label>
+            <textarea asp-for="Mensaje" class="form-control" rows="5"
+                      placeholder="Ej: Hola, me interesa la vaca. ¿Está vacunada? ¿Se puede ver este fin de semana?"></textarea>
+            <span asp-validation-for="Mensaje" class="text-danger small"></span>
+            <p class="text-muted small mt-2 mb-0">El vendedor verá tu nombre, correo y teléfono para poder responderte.</p>
+        </div>
+        <div class="card-footer bg-transparent d-flex gap-2 justify-content-end">
+            @* FA-1-CU06: cancelar *@
+            <a asp-controller="Marketplace" asp-action="Detalle" asp-route-id="@Model.PublicacionVacaId" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-tv">Enviar</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
