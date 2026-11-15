@@ -1,0 +1,107 @@
+@using TuVaca.Comun
+@model TuVaca.Models.Sanidad.HistorialSanitarioViewModel
+@{
+    ViewData["Title"] = "Historial sanitario";
+    var tipos = (List<SelectListItem>)ViewBag.Tipos;
+    tipos.ForEach(t => t.Selected = t.Value == Model.TipoRegistroId?.ToString());
+    var hoy = DateOnly.FromDateTime(DateTime.Today);
+}
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div>
+            <h1 class="tv-titulo h3 mb-0">Historial de vacunas y tratamientos</h1>
+            <p class="text-muted mb-0">Vaca <strong>@Model.VacaIdentificacion</strong> · @Model.VacaRaza</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Vacas" asp-action="Index" class="btn btn-outline-secondary">← Mis vacas</a>
+            @if (Model.VacaViva)
+            {
+                <a asp-action="Registrar" asp-route-vacaId="@Model.VacaId" class="btn btn-tv">+ Registrar vacuna/tratamiento</a>
+            }
+        </div>
+    </div>
+
+    @* FA-1-CU08: filtrar por tipo o rango de fechas *@
+    <form asp-action="Historial" asp-route-id="@Model.VacaId" method="get" class="card tv-card mb-3">
+        <div class="card-body row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold" for="TipoRegistroId">Tipo</label>
+                <select id="TipoRegistroId" name="TipoRegistroId" class="form-select" asp-items="tipos">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold" for="Desde">Desde</label>
+                <input id="Desde" name="Desde" type="date" class="form-control" value="@Model.Desde?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold" for="Hasta">Hasta</label>
+                <input id="Hasta" name="Hasta" type="date" class="form-control" value="@Model.Hasta?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-tv flex-fill">Filtrar</button>
+                <a asp-action="Historial" asp-route-id="@Model.VacaId" class="btn btn-outline-secondary">Limpiar</a>
+            </div>
+        </div>
+    </form>
+
+    @if (Model.Registros.Count == 0)
+    {
+        @* FE-1-CU08 *@
+        <div class="card tv-card">
+            <div class="card-body text-center py-5 text-muted">Esta vaca aún no tiene registros en su historial sanitario.</div>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive card tv-card">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Nombre</th>
+                        <th>Responsable</th>
+                        <th>Próxima dosis</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.Registros)
+                    {
+                        <tr class="@(r.Anulado ? "text-muted text-decoration-line-through" : "")">
+                            <td>@Formatos.Fecha(r.FechaAplicacion)</td>
+                            <td>@r.Tipo</td>
+                            <td>
+                                @r.Nombre
+                                @if (r.Anulado)
+                                {
+                                    @* RN-3-CU08 *@
+                                    <span class="badge text-bg-secondary ms-1">Anulado</span>
+                                }
+                            </td>
+                            <td>@r.Responsable</td>
+                            <td>
+                                @if (r.ProximaDosis != null)
+                                {
+                                    @* RN-4-CU08: resaltar próximas dosis pendientes o vencidas *@
+                                    var vencida = !r.Anulado && r.ProximaDosis < hoy;
+                                    var pendiente = !r.Anulado && r.ProximaDosis >= hoy;
+                                    <span class="badge @(vencida ? "text-bg-danger" : pendiente ? "text-bg-warning" : "text-bg-light")">
+                                        @Formatos.Fecha(r.ProximaDosis.Value) @(vencida ? "· Vencida" : pendiente ? "· Pendiente" : "")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td class="small">@r.Observaciones</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
