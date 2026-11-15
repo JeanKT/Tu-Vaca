@@ -25,7 +25,7 @@
 
             <div class="mb-3">
                 <label asp-for="Fecha" class="form-label">Fecha *</label>
-                <input asp-for="Fecha" type="date" class="form-control" max="@DateTime.Today.ToString("yyyy-MM-dd")" readonly="@Model.YaExiste" />
+                <input asp-for="Fecha" type="date" class="form-control" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="Fecha" class="text-danger small"></span>
             </div>
             <div class="mb-0">
