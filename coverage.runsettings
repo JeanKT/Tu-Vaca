@@ -6,7 +6,7 @@
    - Vistas Razor compiladas (AspNetCoreGeneratedDocument)
    - Entidades y DbContext generados por scaffold de EF Core (Models/Entidades, Data)
    - Program.cs (arranque) y CorreoService (necesita un servidor SMTP real)
-  Uso:  dotnet test --settings coverage.runsettings --collect:"XPlat Code Coverage"
+  Uso: dotnet test con la opcion settings apuntando a este archivo y collect "XPlat Code Coverage"
 -->
 <RunSettings>
   <DataCollectionRunSettings>
