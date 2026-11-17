@@ -59,3 +59,7 @@ nunit-*.xml
 .vs/
 wwwroot/uploads/
 *.user
+
+# Resultados de pruebas y cobertura
+TestResults/
+coveragereport/
