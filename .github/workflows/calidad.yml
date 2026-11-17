@@ -55,6 +55,20 @@ jobs:
       - name: Pruebas unitarias con cobertura
         run: dotnet test TuVaca.Tests/TuVaca.Tests.csproj -c Release --no-build --settings coverage.runsettings --collect:"XPlat Code Coverage" --results-directory ./TestResults
 
+      - name: Resumen de cobertura
+        shell: pwsh
+        run: |
+          $f = Get-ChildItem -Recurse -Path ./TestResults -Filter coverage.cobertura.xml | Select-Object -First 1
+          [xml]$x = Get-Content $f.FullName
+          $lineas = [math]::Round([double]$x.coverage.'line-rate' * 100, 1)
+          $ramas = [math]::Round([double]$x.coverage.'branch-rate' * 100, 1)
+          Write-Host "COBERTURA DE LINEAS: $lineas %  |  COBERTURA DE RAMAS: $ramas %"
+          "## Cobertura de pruebas`n`n- Líneas: **$lineas %**`n- Ramas: **$ramas %**" | Out-File -Append $env:GITHUB_STEP_SUMMARY
+          foreach ($c in $x.coverage.packages.package.classes.class) {
+            $p = [math]::Round([double]$c.'line-rate' * 100, 0)
+            if ($p -lt 70) { Write-Host ("  {0,4}%  {1}" -f $p, $c.name) }
+          }
+
       - name: Terminar análisis de SonarCloud
         if: ${{ env.SONAR_TOKEN != '' }}
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
