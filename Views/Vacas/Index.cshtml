@@ -5,6 +5,10 @@
     var sinFoto = Url.Content("~/images/vaca-sin-foto.svg");
     // El botón "Publicar en venta" aparece solo cuando exista el CU-03 (PublicacionesController)
     var urlPublicar = Url.Action("Crear", "Publicaciones");
+    // Botones de los demás casos de uso: aparecen solos cuando existe su controlador
+    var haySanidad = Url.Action("Historial", "Sanidad") != null;     // CU-07 / CU-08
+    var hayProduccion = Url.Action("Historial", "Produccion") != null; // CU-11
+    var hayEditar = Url.Action("Editar", "Vacas") != null;            // CU-12
 }
 
 <div class="container py-4">
@@ -47,13 +51,30 @@
                                 <span class="badge text-bg-warning mt-2">Publicada en venta</span>
                             }
                         </div>
-                        @if (urlPublicar != null && vaca.EstadoId == Catalogos.VacaViva && !vaca.TienePublicacionActiva)
-                        {
-                            <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
+                        <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3 d-grid gap-2">
+                            @if (urlPublicar != null && vaca.EstadoId == Catalogos.VacaViva && !vaca.TienePublicacionActiva)
+                            {
                                 <a asp-controller="Publicaciones" asp-action="Crear" asp-route-vacaId="@vaca.VacaId"
-                                   class="btn btn-sm btn-tv-marron w-100">Publicar en venta</a>
+                                   class="btn btn-sm btn-tv-marron">Publicar en venta</a>
+                            }
+                            <div class="d-flex gap-2">
+                                @if (haySanidad)
+                                {
+                                    <a asp-controller="Sanidad" asp-action="Historial" asp-route-id="@vaca.VacaId"
+                                       class="btn btn-sm btn-tv-outline flex-fill">💉 Vacunas</a>
+                                }
+                                @if (hayProduccion)
+                                {
+                                    <a asp-controller="Produccion" asp-action="Historial" asp-route-id="@vaca.VacaId"
+                                       class="btn btn-sm btn-tv-outline flex-fill">🥛 Leche</a>
+                                }
+                                @if (hayEditar && vaca.EstadoId == Catalogos.VacaViva)
+                                {
+                                    <a asp-controller="Vacas" asp-action="Editar" asp-route-id="@vaca.VacaId"
+                                       class="btn btn-sm btn-outline-secondary flex-fill">✏️ Editar</a>
+                                }
                             </div>
-                        }
+                        </div>
                     </div>
                 </div>
             }
