@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using TuVaca.Data;
 using TuVaca.Seguridad;
 
+// Reportes PDF (QuestPDF): licencia Community, gratuita para proyectos académicos
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // MVC
@@ -35,6 +38,7 @@ builder.Services.AddAuthorization();
 // Servicios de los demás casos de uso (cada rama agrega aquí su línea):
 builder.Services.AddScoped<TuVaca.Servicios.NotificacionService>();
 builder.Services.AddScoped<TuVaca.Servicios.CorreoService>();
+builder.Services.AddScoped<TuVaca.Servicios.ReporteService>();
 
 var app = builder.Build();
 
