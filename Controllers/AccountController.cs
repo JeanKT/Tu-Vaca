@@ -294,6 +294,14 @@ namespace TuVaca.Controllers
                     return LocalRedirect(misVacas);
                 }
             }
+            if (rol == Catalogos.RolAdministrador)
+            {
+                return RedirectToAction("Index", "Usuarios"); // CU-10
+            }
+            if (rol == Catalogos.RolComprador)
+            {
+                return RedirectToAction("Index", "Marketplace"); // CU-05
+            }
             return RedirectToAction("Index", "Home");
         }
 

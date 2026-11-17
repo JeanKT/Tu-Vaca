@@ -1,0 +1,95 @@
+@using TuVaca.Comun
+@using TuVaca.Seguridad
+@model TuVaca.Models.Administracion.UsuariosIndexViewModel
+@{
+    ViewData["Title"] = "Gestión de usuarios";
+    var roles = (List<SelectListItem>)ViewBag.Roles;
+    var filtroRoles = roles.Select(r => new SelectListItem(r.Text, r.Value, r.Value == Model.RolId?.ToString())).ToList();
+    var filtroEstados = new List<SelectListItem>
+    {
+        new("Activo", Catalogos.UsuarioActivo.ToString(), Model.EstadoId == Catalogos.UsuarioActivo),
+        new("Inactivo", Catalogos.UsuarioInactivo.ToString(), Model.EstadoId == Catalogos.UsuarioInactivo)
+    };
+    var miId = User.ObtenerUsuarioId();
+}
+
+<div class="container py-4">
+    <h1 class="tv-titulo h3 mb-1">Gestión de usuarios</h1>
+    <p class="text-muted mb-3">@Model.Usuarios.Count usuario(s)</p>
+
+    @* FA-2-CU10: filtros *@
+    <form asp-action="Index" method="get" class="card tv-card mb-3">
+        <div class="card-body row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold" for="buscar">Nombre, correo o documento</label>
+                <input id="buscar" name="buscar" value="@Model.Buscar" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold" for="rolId">Rol</label>
+                <select id="rolId" name="rolId" class="form-select" asp-items="filtroRoles"><option value="">Todos</option></select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-semibold" for="estadoId">Estado</label>
+                <select id="estadoId" name="estadoId" class="form-select" asp-items="filtroEstados"><option value="">Todos</option></select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-tv flex-fill">Filtrar</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Limpiar</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="card tv-card table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th class="text-end">Acciones</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model.Usuarios)
+                {
+                    var esYo = u.UsuarioId == miId;
+                    <tr>
+                        <td>@u.NombreCompleto @(esYo ? "(tú)" : "")<div class="text-muted small">Doc. @u.NumeroDocumento</div></td>
+                        <td>@u.Correo</td>
+                        <td>
+                            @if (esYo)
+                            {
+                                @u.Rol
+                            }
+                            else
+                            {
+                                <form asp-action="CambiarRol" asp-route-id="@u.UsuarioId" method="post" class="d-flex gap-1"
+                                      onsubmit="return confirm('¿Confirmas el cambio de rol de @u.NombreCompleto?');">
+                                    <select name="rolId" class="form-select form-select-sm" style="min-width:170px"
+                                            asp-items="@(roles.Select(r => new SelectListItem(r.Text, r.Value, r.Value == u.RolId.ToString())))"></select>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Cambiar</button>
+                                </form>
+                            }
+                        </td>
+                        <td><span class="badge @(u.EstadoId == Catalogos.UsuarioActivo ? "text-bg-success" : "text-bg-secondary")">@u.Estado</span></td>
+                        <td class="text-end text-nowrap">
+                            <a asp-action="Editar" asp-route-id="@u.UsuarioId" class="btn btn-sm btn-tv-outline">Editar datos</a>
+                            @if (!esYo)
+                            {
+                                if (u.EstadoId == Catalogos.UsuarioActivo)
+                                {
+                                    <form asp-action="Desactivar" asp-route-id="@u.UsuarioId" method="post" class="d-inline"
+                                          onsubmit="return confirm('¿Desactivar a @u.NombreCompleto? Sus publicaciones activas quedarán pausadas.');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Desactivar</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Activar" asp-route-id="@u.UsuarioId" method="post" class="d-inline"
+                                          onsubmit="return confirm('¿Activar a @u.NombreCompleto?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">Activar</button>
+                                    </form>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
