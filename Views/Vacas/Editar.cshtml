@@ -1,0 +1,113 @@
+@model TuVaca.Models.Hato.EditarVacaViewModel
+@{
+    ViewData["Title"] = "Editar vaca";
+    var hoy = DateTime.Today.ToString("yyyy-MM-dd");
+    var sinFoto = Url.Content("~/images/vaca-sin-foto.svg");
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card tv-card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="tv-titulo h3 mb-1">Editar vaca @Model.Identificacion</h1>
+                    <p class="text-muted small mb-4">La identificación no se puede cambiar. Los campos con * son obligatorios.</p>
+
+                    <form asp-controller="Vacas" asp-action="Editar" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+                        <input type="hidden" asp-for="VacaId" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Identificación</label>
+                                <input value="@Model.Identificacion" class="form-control" disabled />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Raza" class="form-label">Raza *</label>
+                                <input asp-for="Raza" class="form-control" list="razas" />
+                                <datalist id="razas">
+                                    <option value="Holstein"></option>
+                                    <option value="Jersey"></option>
+                                    <option value="Normando"></option>
+                                    <option value="Pardo Suizo"></option>
+                                    <option value="Gyr"></option>
+                                    <option value="Girolando"></option>
+                                    <option value="Brahman"></option>
+                                    <option value="Cebú"></option>
+                                    <option value="Simmental"></option>
+                                    <option value="Angus"></option>
+                                    <option value="Romosinuano"></option>
+                                    <option value="Blanco Orejinegro (BON)"></option>
+                                    <option value="Costeño con Cuernos"></option>
+                                    <option value="Criolla"></option>
+                                    <option value="Cruzada / Mestiza"></option>
+                                </datalist>
+                                <span asp-validation-for="Raza" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Sexo" class="form-label">Sexo *</label>
+                                <select asp-for="Sexo" class="form-select">
+                                    <option value="Hembra">Hembra</option>
+                                    <option value="Macho">Macho</option>
+                                </select>
+                                <span asp-validation-for="Sexo" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="FechaNacimiento" class="form-label">Fecha de nacimiento *</label>
+                                <input asp-for="FechaNacimiento" class="form-control" max="@hoy" />
+                                <span asp-validation-for="FechaNacimiento" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Peso" class="form-label">Peso (kg) *</label>
+                                <input asp-for="Peso" type="number" step="0.1" min="0.1" class="form-control" />
+                                <span asp-validation-for="Peso" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DepartamentoId" class="form-label">Departamento de origen</label>
+                                <select asp-for="DepartamentoId" asp-items="ViewBag.Departamentos" class="form-select"
+                                        data-municipios="MunicipioOrigenId" data-url="@Url.Action("Municipios", "Ubicaciones")">
+                                    <option value="">Opcional…</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="MunicipioOrigenId" class="form-label">Municipio de origen</label>
+                                <select asp-for="MunicipioOrigenId" class="form-select"
+                                        data-seleccionado="@Model.MunicipioOrigenId" disabled>
+                                    <option value="">Selecciona primero el departamento</option>
+                                </select>
+                                <span asp-validation-for="MunicipioOrigenId" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 d-flex gap-3 align-items-center">
+                            <img src="@(Model.FotoActualUrl ?? sinFoto)" alt="Foto actual" class="tv-foto-mini" />
+                            <div class="flex-fill">
+                                <label asp-for="Foto" class="form-label"></label>
+                                <input asp-for="Foto" class="form-control" accept="image/jpeg,image/png,image/webp" />
+                                <div class="form-text">Déjalo vacío para conservar la foto actual. Máximo 2 MB.</div>
+                                <span asp-validation-for="Foto" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            @* FA-1-CU12: cancelar descarta los cambios *@
+                            <a asp-controller="Vacas" asp-action="Index" class="btn btn-tv-outline w-50">Cancelar</a>
+                            <button type="submit" class="btn btn-tv w-50">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/ubicaciones.js" asp-append-version="true"></script>
+}
