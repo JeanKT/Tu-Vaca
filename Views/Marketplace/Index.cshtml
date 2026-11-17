@@ -1,0 +1,136 @@
+@using TuVaca.Comun
+@model TuVaca.Models.Marketplace.MarketplaceIndexViewModel
+@{
+    ViewData["Title"] = "Marketplace";
+    var f = Model.Filtros;
+    var departamentos = (List<SelectListItem>)ViewBag.Departamentos;
+    var razas = Model.Razas.Select(r => new SelectListItem(r, r, r == f.Raza)).ToList();
+    var ordenes = new List<SelectListItem>
+    {
+        new("Más recientes", "recientes", f.Orden == "recientes"),
+        new("Precio: menor a mayor", "precio_asc", f.Orden == "precio_asc"),
+        new("Precio: mayor a menor", "precio_desc", f.Orden == "precio_desc")
+    };
+}
+
+<div class="container py-4">
+    <div class="mb-4">
+        <h1 class="tv-titulo h3 mb-0">Marketplace</h1>
+        <p class="text-muted small mb-0">Vacas en venta publicadas por ganaderos. Busca y filtra según lo que necesitas.</p>
+    </div>
+
+    <div class="row g-4">
+        @* ---------- Panel de filtros (paso 2) ---------- *@
+        <div class="col-lg-3">
+            <form asp-action="Index" method="get" class="card tv-card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="Q" class="form-label small fw-semibold">Palabra clave</label>
+                        <input id="Q" name="Q" value="@f.Q" class="form-control" placeholder="Ej: Holstein, lechera..." />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="DepartamentoId" class="form-label small fw-semibold">Departamento</label>
+                        <select id="DepartamentoId" name="DepartamentoId" class="form-select"
+                                data-municipios="MunicipioId" data-url="@Url.Action("Municipios", "Ubicaciones")"
+                                asp-items="departamentos">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="MunicipioId" class="form-label small fw-semibold">Municipio</label>
+                        <select id="MunicipioId" name="MunicipioId" class="form-select" data-seleccionado="@f.MunicipioId" disabled>
+                            <option value="">Selecciona primero el departamento</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Precio (COP)</label>
+                        <div class="d-flex gap-2">
+                            <input name="PrecioMin" value="@f.PrecioMin" type="number" min="0" step="1000" class="form-control" placeholder="Mín." />
+                            <input name="PrecioMax" value="@f.PrecioMax" type="number" min="0" step="1000" class="form-control" placeholder="Máx." />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Raza" class="form-label small fw-semibold">Raza</label>
+                        <select id="Raza" name="Raza" class="form-select" asp-items="razas">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Edad (años)</label>
+                        <div class="d-flex gap-2">
+                            <input name="EdadMinAnios" value="@f.EdadMinAnios" type="number" min="0" max="30" class="form-control" placeholder="Desde" />
+                            <input name="EdadMaxAnios" value="@f.EdadMaxAnios" type="number" min="0" max="30" class="form-control" placeholder="Hasta" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Orden" class="form-label small fw-semibold">Ordenar por</label>
+                        <select id="Orden" name="Orden" class="form-select" asp-items="ordenes"></select>
+                    </div>
+
+                    <button type="submit" class="btn btn-tv w-100 mb-2">Aplicar filtros</button>
+                    @* FA-1-CU05: limpiar filtros *@
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100">Limpiar filtros</a>
+                </div>
+            </form>
+        </div>
+
+        @* ---------- Resultados (paso 6) ---------- *@
+        <div class="col-lg-9">
+            @if (Model.Error != null)
+            {
+                <div class="alert alert-danger">@Model.Error</div>
+            }
+            else if (Model.Resultados.Count == 0)
+            {
+                @* FE-1-CU05: sin resultados *@
+                <div class="card tv-card">
+                    <div class="card-body text-center py-5">
+                        @if (f.HayFiltros)
+                        {
+                            <p class="mb-1">No se encontraron publicaciones con los filtros seleccionados.</p>
+                            <p class="text-muted small mb-3">Prueba ajustando o quitando algunos filtros.</p>
+                            <a asp-action="Index" class="btn btn-tv-outline">Limpiar filtros</a>
+                        }
+                        else
+                        {
+                            <p class="text-muted mb-0">Todavía no hay vacas publicadas en venta.</p>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted small">@Model.Resultados.Count publicación(es) encontrada(s)</p>
+                <div class="row g-3">
+                    @foreach (var p in Model.Resultados)
+                    {
+                        <div class="col-md-6 col-xl-4">
+                            <div class="card tv-card h-100">
+                                <img src="@p.FotoUrl" alt="Vaca @p.Raza en venta" class="tv-foto" />
+                                <div class="card-body">
+                                    <h2 class="h5 mb-1">@Formatos.Pesos(p.Precio)</h2>
+                                    <p class="fw-semibold mb-1">@p.Raza · @p.Sexo</p>
+                                    <p class="tv-dato mb-1">@Formatos.Edad(p.FechaNacimiento) · @p.Peso.ToString("0.#") kg</p>
+                                    <p class="tv-dato mb-1">📍 @p.Ubicacion</p>
+                                    <p class="text-muted small mb-0">Publicada el @Formatos.Fecha(p.FechaPublicacion)</p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
+                                    <a asp-action="Detalle" asp-route-id="@p.PublicacionVacaId" class="btn btn-tv w-100">Ver detalle</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/ubicaciones.js" asp-append-version="true"></script>
+}
