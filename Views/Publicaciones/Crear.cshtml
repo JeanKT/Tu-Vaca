@@ -1,0 +1,115 @@
+﻿@model TuVaca.Models.Publicaciones.PublicarVacaViewModel
+@{
+    ViewData["Title"] = "Publicar vaca en venta";
+    var sinFoto = Url.Content("~/images/vaca-sin-foto.svg");
+    var tieneFoto = Model.FotoVacaUrl != null;
+}
+
+<div class="container py-4">
+    <h1 class="tv-titulo h3 mb-3">Publicar vaca en venta</h1>
+
+    <div class="row g-4">
+        @* Paso 3: datos de la vaca precargados *@
+        <div class="col-lg-4">
+            <div class="card tv-card">
+                <img src="@(Model.FotoVacaUrl ?? sinFoto)" alt="Foto de la vaca @Model.Identificacion" class="tv-foto" />
+                <div class="card-body">
+                    <h2 class="h5 mb-1">@Model.Identificacion</h2>
+                    <p class="tv-dato mb-1">@Model.Raza · @Model.Sexo</p>
+                    <p class="tv-dato mb-1">Edad: @Model.Edad</p>
+                    <p class="tv-dato mb-0">Peso: @Model.Peso.ToString("0.##") kg</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card tv-card shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-controller="Publicaciones" asp-action="Crear" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+                        <input asp-for="VacaId" type="hidden" />
+
+                        <div class="mb-3">
+                            <label asp-for="Precio" class="form-label">Precio de venta (pesos) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="Precio" type="number" min="1" step="1" class="form-control" placeholder="Ej: 3500000" />
+                            </div>
+                            <span asp-validation-for="Precio" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label">Descripción *</label>
+                            <textarea asp-for="Descripcion" rows="4" class="form-control"
+                                      placeholder="Ej: Vaca de buen temperamento, vacunas al día, produce 18 litros diarios."></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DepartamentoId" class="form-label">Departamento *</label>
+                                <select asp-for="DepartamentoId" asp-items="ViewBag.Departamentos" class="form-select"
+                                        data-municipios="MunicipioId" data-url="@Url.Action("Municipios", "Ubicaciones")">
+                                    <option value="">Selecciona…</option>
+                                </select>
+                                <span asp-validation-for="DepartamentoId" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="MunicipioId" class="form-label">Municipio *</label>
+                                <select asp-for="MunicipioId" class="form-select" data-seleccionado="@Model.MunicipioId" disabled>
+                                    <option value="">Selecciona primero el departamento</option>
+                                </select>
+                                <span asp-validation-for="MunicipioId" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        @* RN-4-CU03: al menos una foto (la de la vaca o una nueva) *@
+                        <div class="mb-4">
+                            <label class="form-label">Fotografía *</label>
+                            @if (tieneFoto)
+                            {
+                                <div class="form-check mb-2">
+                                    <input asp-for="UsarFotoDeLaVaca" class="form-check-input" />
+                                    <label asp-for="UsarFotoDeLaVaca" class="form-check-label"></label>
+                                </div>
+                            }
+                            <input asp-for="FotoNueva" class="form-control" accept="image/jpeg,image/png,image/webp" />
+                            <div class="form-text">
+                                @(tieneFoto ? "Para usar otra foto, quita la marca y sube una nueva." : "Sube al menos una foto de la vaca.")
+                                JPG, PNG o WEBP de máximo 2 MB.
+                            </div>
+                            <span asp-validation-for="FotoNueva" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            @* FA-1-CU03: cancelar pide confirmación y vuelve a "Mis vacas" *@
+                            <a asp-controller="Vacas" asp-action="Index" class="btn btn-tv-outline w-50"
+                               onclick="return confirm('¿Deseas cancelar la publicación?');">Cancelar</a>
+                            <button type="submit" class="btn btn-tv w-50">Publicar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/ubicaciones.js" asp-append-version="true"></script>
+    <script>
+        // Si se usa la foto de la vaca, no hace falta subir otra
+        (function () {
+            var usarFoto = document.getElementById('UsarFotoDeLaVaca');
+            var fotoNueva = document.getElementById('FotoNueva');
+            if (!usarFoto || !fotoNueva) {
+                return;
+            }
+            function actualizar() {
+                fotoNueva.disabled = usarFoto.checked;
+            }
+            usarFoto.addEventListener('change', actualizar);
+            actualizar();
+        })();
+    </script>
+}

@@ -1,0 +1,57 @@
+﻿@model TuVaca.Models.Cuentas.LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="card tv-card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <img src="~/images/tuvagalogo.jpeg" alt="Tu Vaca" class="tv-logo" />
+                        <h1 class="tv-titulo h3 mt-3 mb-1">Iniciar sesión</h1>
+                        <p class="text-muted small mb-0">Ingresa con tu correo o tu número de cédula.</p>
+                    </div>
+
+                    <form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="CorreoODocumento" class="form-label"></label>
+                            <input asp-for="CorreoODocumento" class="form-control" autocomplete="username" autofocus />
+                            <span asp-validation-for="CorreoODocumento" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Contrasena" class="form-label"></label>
+                            <input asp-for="Contrasena" class="form-control" autocomplete="current-password" />
+                            <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input asp-for="MantenerSesion" class="form-check-input" />
+                                <label asp-for="MantenerSesion" class="form-check-label small"></label>
+                            </div>
+                            @* FA-2-CU01: lleva al CU-23 (Recuperar contraseña) *@
+                            <a href="/RecuperarContrasena/Solicitar" class="small">¿Olvidó su contraseña?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-tv w-100">Ingresar</button>
+                    </form>
+
+                    <hr class="my-4" />
+                    <p class="text-center small mb-0">
+                        ¿No tienes cuenta?
+                        <a asp-controller="Account" asp-action="Register">Crear cuenta nueva</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

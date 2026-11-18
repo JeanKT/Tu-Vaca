@@ -1,0 +1,63 @@
+@model TuVaca.Models.Sanidad.RegistrarSanitarioViewModel
+@{
+    ViewData["Title"] = "Registrar vacuna o tratamiento";
+    var tipos = (List<SelectListItem>)ViewBag.Tipos;
+}
+
+<div class="container py-4" style="max-width:760px">
+    <h1 class="tv-titulo h3 mb-1">Registrar vacuna o tratamiento</h1>
+    <p class="text-muted mb-4">Vaca <strong>@Model.VacaIdentificacion</strong></p>
+
+    <form asp-action="Registrar" method="post" class="card tv-card">
+        <div class="card-body">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="VacaId" />
+            <input type="hidden" asp-for="VacaIdentificacion" />
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="TipoRegistroId" class="form-label">Tipo *</label>
+                    <select asp-for="TipoRegistroId" asp-items="tipos" class="form-select">
+                        <option value="">Selecciona…</option>
+                    </select>
+                    <span asp-validation-for="TipoRegistroId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-8">
+                    <label asp-for="Nombre" class="form-label">Nombre *</label>
+                    <input asp-for="Nombre" class="form-control" placeholder="Ej: Aftosa, Brucelosis, Ivermectina…" />
+                    <span asp-validation-for="Nombre" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="FechaAplicacion" class="form-label">Fecha de aplicación *</label>
+                    <input asp-for="FechaAplicacion" type="date" class="form-control" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="FechaAplicacion" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ProximaDosis" class="form-label"></label>
+                    <input asp-for="ProximaDosis" type="date" class="form-control" />
+                    <span asp-validation-for="ProximaDosis" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Responsable" class="form-label">Responsable *</label>
+                    <input asp-for="Responsable" class="form-control" placeholder="Nombre del veterinario o de quien la aplicó" />
+                    <span asp-validation-for="Responsable" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Observaciones" class="form-label"></label>
+                    <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Observaciones" class="text-danger small"></span>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent d-flex gap-2 justify-content-end">
+            @* FA-1-CU07: cancelar *@
+            <a asp-action="Historial" asp-route-id="@Model.VacaId" class="btn btn-outline-secondary"
+               onclick="return confirm('¿Deseas cancelar el registro?');">Cancelar</a>
+            <button type="submit" class="btn btn-tv">Guardar</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

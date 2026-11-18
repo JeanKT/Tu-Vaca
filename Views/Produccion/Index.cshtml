@@ -1,0 +1,67 @@
+@using TuVaca.Comun
+@model TuVaca.Models.Produccion.ResumenProduccionViewModel
+@{
+    ViewData["Title"] = "Producción de leche";
+    var hayReportes = Url.Action("ProduccionExcel", "Reportes") != null;
+}
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div>
+            <h1 class="tv-titulo h3 mb-0">Producción de leche del hato</h1>
+            <p class="text-muted mb-0">Del @Formatos.Fecha(Model.Desde) al @Formatos.Fecha(Model.Hasta)</p>
+        </div>
+        @if (hayReportes)
+        {
+            <div class="d-flex gap-2">
+                <a asp-controller="Reportes" asp-action="ProduccionPdf" asp-route-desde="@Model.Desde.ToString("yyyy-MM-dd")" asp-route-hasta="@Model.Hasta.ToString("yyyy-MM-dd")" class="btn btn-outline-danger">⬇ PDF</a>
+                <a asp-controller="Reportes" asp-action="ProduccionExcel" asp-route-desde="@Model.Desde.ToString("yyyy-MM-dd")" asp-route-hasta="@Model.Hasta.ToString("yyyy-MM-dd")" class="btn btn-outline-success">⬇ Excel</a>
+            </div>
+        }
+    </div>
+
+    <form asp-action="Index" method="get" class="card tv-card mb-3">
+        <div class="card-body row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold" for="desde">Desde</label>
+                <input id="desde" name="desde" type="date" class="form-control" value="@Model.Desde.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold" for="hasta">Hasta</label>
+                <input id="hasta" name="hasta" type="date" class="form-control" value="@Model.Hasta.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-4"><button type="submit" class="btn btn-tv w-100">Consultar</button></div>
+        </div>
+    </form>
+
+    <div class="card tv-card mb-3"><div class="card-body">
+        <p class="text-muted small mb-0">Total del hato en el periodo</p>
+        <p class="h3 mb-0">@Model.Total.ToString("0.##") L</p>
+    </div></div>
+
+    @if (Model.Vacas.Count == 0)
+    {
+        <div class="card tv-card"><div class="card-body text-center py-5 text-muted">No tienes vacas hembra registradas.</div></div>
+    }
+    else
+    {
+        <div class="card tv-card table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light"><tr><th>Vaca</th><th>Raza</th><th class="text-end">Días</th><th class="text-end">Total (L)</th><th class="text-end">Promedio (L/día)</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var v in Model.Vacas)
+                    {
+                        <tr>
+                            <td>@v.Identificacion</td>
+                            <td>@v.Raza</td>
+                            <td class="text-end">@v.Dias</td>
+                            <td class="text-end">@v.Total.ToString("0.##")</td>
+                            <td class="text-end">@v.Promedio.ToString("0.##")</td>
+                            <td class="text-end"><a asp-action="Historial" asp-route-id="@v.VacaId" class="btn btn-sm btn-tv-outline">Ver</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,83 @@
+﻿@using TuVaca.Comun
+@model List<TuVaca.Models.Hato.VacaListadoItem>
+@{
+    ViewData["Title"] = "Mis vacas";
+    var sinFoto = Url.Content("~/images/vaca-sin-foto.svg");
+    // El botón "Publicar en venta" aparece solo cuando exista el CU-03 (PublicacionesController)
+    var urlPublicar = Url.Action("Crear", "Publicaciones");
+    // Botones de los demás casos de uso: aparecen solos cuando existe su controlador
+    var haySanidad = Url.Action("Historial", "Sanidad") != null;     // CU-07 / CU-08
+    var hayProduccion = Url.Action("Historial", "Produccion") != null; // CU-11
+    var hayEditar = Url.Action("Editar", "Vacas") != null;            // CU-12
+}
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+            <h1 class="tv-titulo h3 mb-0">Mis vacas</h1>
+            <p class="text-muted small mb-0">@Model.Count vaca(s) registrada(s)</p>
+        </div>
+        <a asp-controller="Vacas" asp-action="Registrar" class="btn btn-tv">+ Registrar vaca</a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="card tv-card">
+            <div class="card-body text-center py-5">
+                <p class="text-muted mb-3">Todavía no tienes vacas registradas.</p>
+                <a asp-controller="Vacas" asp-action="Registrar" class="btn btn-tv">Registrar mi primera vaca</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var vaca in Model)
+            {
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card tv-card h-100">
+                        @* FA-2-CU02: sin foto se muestra una imagen genérica *@
+                        <img src="@(vaca.FotoUrl ?? sinFoto)" alt="Foto de la vaca @vaca.Identificacion" class="tv-foto" />
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <h2 class="h5 mb-1">@vaca.Identificacion</h2>
+                                <span class="badge @(vaca.EstadoId == Catalogos.VacaViva ? "text-bg-success" : "text-bg-secondary")">@vaca.Estado</span>
+                            </div>
+                            <p class="tv-dato mb-1">@vaca.Raza · @vaca.Sexo</p>
+                            <p class="tv-dato mb-1">Edad: @Formatos.Edad(vaca.FechaNacimiento)</p>
+                            <p class="tv-dato mb-0">Peso: @vaca.Peso.ToString("0.##") kg</p>
+                            @if (vaca.TienePublicacionActiva)
+                            {
+                                <span class="badge text-bg-warning mt-2">Publicada en venta</span>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3 d-grid gap-2">
+                            @if (urlPublicar != null && vaca.EstadoId == Catalogos.VacaViva && !vaca.TienePublicacionActiva)
+                            {
+                                <a asp-controller="Publicaciones" asp-action="Crear" asp-route-vacaId="@vaca.VacaId"
+                                   class="btn btn-sm btn-tv-marron">Publicar en venta</a>
+                            }
+                            <div class="d-flex gap-2">
+                                @if (haySanidad)
+                                {
+                                    <a asp-controller="Sanidad" asp-action="Historial" asp-route-id="@vaca.VacaId"
+                                       class="btn btn-sm btn-tv-outline flex-fill">💉 Vacunas</a>
+                                }
+                                @if (hayProduccion)
+                                {
+                                    <a asp-controller="Produccion" asp-action="Historial" asp-route-id="@vaca.VacaId"
+                                       class="btn btn-sm btn-tv-outline flex-fill">🥛 Leche</a>
+                                }
+                                @if (hayEditar && vaca.EstadoId == Catalogos.VacaViva)
+                                {
+                                    <a asp-controller="Vacas" asp-action="Editar" asp-route-id="@vaca.VacaId"
+                                       class="btn btn-sm btn-outline-secondary flex-fill">✏️ Editar</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

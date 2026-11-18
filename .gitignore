@@ -55,3 +55,16 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+.vs/
+wwwroot/uploads/
+*.user
+
+# Resultados de pruebas y cobertura
+TestResults/
+coveragereport/
+
+# Configuración de producción (cadena de conexión y correo del hosting): NO subir
+appsettings.Production.json
+*.pubxml
+*.PublishSettings

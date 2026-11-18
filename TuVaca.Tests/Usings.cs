@@ -1,0 +1,11 @@
+global using System.Security.Claims;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Logging.Abstractions;
+global using TuVaca.Comun;
+global using TuVaca.Data;
+global using TuVaca.Models.Entidades;
+global using TuVaca.Tests.Infraestructura;
+global using Xunit;
+global using TuVaca.Seguridad;
