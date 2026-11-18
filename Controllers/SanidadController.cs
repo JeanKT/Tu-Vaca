@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -186,12 +186,7 @@ namespace TuVaca.Controllers
                 // FA-2: recordatorio en la campanita el día de la próxima dosis
                 if (modelo.ProximaDosis != null)
                 {
-                    await _notificaciones.CrearAsync(
-                        vaca.UsuarioId,
-                        TiposNotificacionId.RecordatorioDosis,
-                        $"Hoy toca la próxima dosis de {registro.Nombre} para la vaca {vaca.Identificacion}.",
-                        $"/Sanidad/Historial/{vaca.VacaId}",
-                        modelo.ProximaDosis.Value.Date.AddHours(6));
+                    await CrearRecordatorioAsync(vaca, registro.Nombre, modelo.ProximaDosis.Value);
                 }
 
                 // Paso 7
@@ -210,6 +205,24 @@ namespace TuVaca.Controllers
         }
 
         // ============================== APOYO ==============================
+
+        // El registro ya quedó guardado: si el recordatorio falla, solo se anota en el log
+        private async Task CrearRecordatorioAsync(Vacas vaca, string nombre, DateTime proximaDosis)
+        {
+            try
+            {
+                await _notificaciones.CrearAsync(
+                    vaca.UsuarioId,
+                    TiposNotificacionId.RecordatorioDosis,
+                    $"Hoy toca la próxima dosis de {nombre} para la vaca {vaca.Identificacion}.",
+                    $"/Sanidad/Historial/{vaca.VacaId}",
+                    proximaDosis.Date.AddHours(6));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "CU-07: no se pudo crear el recordatorio de la vaca {VacaId}", vaca.VacaId);
+            }
+        }
 
         private Task<Vacas?> BuscarVacaPropiaAsync(int vacaId)
         {
