@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuVaca.Comun;
@@ -98,11 +98,19 @@ namespace TuVaca.Controllers
                 await _db.SaveChangesAsync();
 
                 // Notificación interna al vendedor (campanita)
-                await _notificaciones.CrearAsync(
-                    publicacion.UsuarioId,
-                    TiposNotificacionId.MensajeDeComprador,
-                    $"{User.ObtenerNombre()} te escribió por la vaca {publicacion.Identificacion} ({publicacion.Raza}).",
-                    "/Contactos/Recibidos");
+                // (el mensaje ya quedó guardado: si la notificación falla, solo se anota en el log)
+                try
+                {
+                    await _notificaciones.CrearAsync(
+                        publicacion.UsuarioId,
+                        TiposNotificacionId.MensajeDeComprador,
+                        $"{User.ObtenerNombre()} te escribió por la vaca {publicacion.Identificacion} ({publicacion.Raza}).",
+                        "/Contactos/Recibidos");
+                }
+                catch (Exception exNotificacion)
+                {
+                    _logger.LogWarning(exNotificacion, "CU-06: no se pudo notificar al vendedor {VendedorId}", publicacion.UsuarioId);
+                }
 
                 // Además, aviso por correo (si falla, el mensaje igual queda registrado)
                 await EnviarCorreoAlVendedorAsync(publicacion.UsuarioId, publicacion.Identificacion, modelo.Mensaje.Trim());
